@@ -1,0 +1,119 @@
+package io.rabobank.ret.commands
+
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import io.rabobank.ret.RetConsole
+import io.rabobank.ret.configuration.Config
+import io.rabobank.ret.configuration.ConfigurationProperty
+import io.rabobank.ret.util.OsUtils
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
+import picocli.CommandLine
+import java.nio.file.Files
+import java.nio.file.Path
+import java.util.*
+import kotlin.io.path.pathString
+
+class PluginInitializeCommandTest {
+    private lateinit var command: PluginInitializeCommand
+    private lateinit var config: Config
+    private lateinit var retConsole: RetConsole
+    private lateinit var osUtils: OsUtils
+
+    @TempDir
+    lateinit var mockUserHomeDirectory: Path
+
+    @BeforeEach
+    fun before() {
+        config = TestConfig()
+        retConsole = mock()
+        osUtils = mock()
+        whenever(osUtils.getHomeDirectory()).thenReturn(mockUserHomeDirectory.pathString)
+        command = PluginInitializeCommand(jacksonObjectMapper(), config, retConsole, osUtils)
+        command.commandSpec = CommandLine.Model.CommandSpec.create()
+
+        val retFolder = Files.createDirectory(mockUserHomeDirectory.resolve(".ret"))
+        val pluginsPath = Files.createDirectory(retFolder.resolve("plugins"))
+        val demoPlugin = "demo-plugin.dylib"
+        val mockPlugin = Files.createFile(pluginsPath.resolve(demoPlugin))
+
+        command.pluginName = "demo-plugin.dylib"
+    }
+
+    @Test
+    fun `should create plugin information file`() {
+        whenever(retConsole.prompt("Enter your Rabobank project:", null)).thenReturn("myProject")
+        whenever(retConsole.prompt("Enter your Rabobank organisation:", null)).thenReturn("myOrganisation")
+
+        command.run()
+        assertThat(mockUserHomeDirectory.resolve(".ret/plugins/demo-plugin.plugin")).exists()
+    }
+
+    @Test
+    fun newProperty() {
+        whenever(retConsole.prompt("Enter your Rabobank project:", null)).thenReturn("myProject")
+        whenever(retConsole.prompt("Enter your Rabobank organisation:", null)).thenReturn("myOrganisation")
+
+
+        command.run()
+
+        assertThat(config["project"]).isEqualTo("myProject")
+        assertThat(config["organisation"]).isEqualTo("myOrganisation")
+    }
+
+    @Test
+    fun overwriteExistingProperty() {
+        config["project"] = "oldProject"
+        config["organisation"] = "oldOrganisation"
+
+        whenever(retConsole.prompt("Enter your Rabobank project:", "oldProject")).thenReturn("newProject")
+        whenever(
+            retConsole.prompt(
+                "Enter your Rabobank organisation:",
+                "oldOrganisation"
+            )
+        ).thenReturn("newOrganisation")
+
+        command.run()
+
+        assertThat(config["project"]).isEqualTo("newProject")
+        assertThat(config["organisation"]).isEqualTo("newOrganisation")
+    }
+
+    @Test
+    fun overwriteExistingPropertyWithDefaults() {
+        config["project"] = "oldProject"
+        config["organisation"] = "oldOrganisation"
+
+        whenever(retConsole.prompt("Enter your Rabobank project:", "oldProject")).thenReturn("")
+        whenever(retConsole.prompt("Enter your Rabobank organisation:", "oldOrganisation")).thenReturn("")
+
+        command.run()
+
+        assertThat(config["project"]).isEqualTo("oldProject")
+        assertThat(config["organisation"]).isEqualTo("oldOrganisation")
+    }
+
+    class TestConfig : Config {
+        private val configProps = listOf(
+            ConfigurationProperty("project", "Enter your Rabobank project"),
+            ConfigurationProperty("organisation", "Enter your Rabobank organisation")
+        )
+        private val properties = Properties()
+
+        override fun get(key: String) = properties[key] as String?
+
+        override fun set(key: String, value: String) {
+            properties[key] = value
+        }
+
+        override fun configure(function: (ConfigurationProperty) -> Unit) {
+            configProps.forEach(function)
+        }
+
+        override fun configFile(): Path = Path.of("test-configuration")
+    }
+}
