@@ -1,0 +1,38 @@
+name: Prepare RET release
+
+on:
+    workflow_dispatch:
+        inputs:
+            version:
+                description: 'Version to release'
+                required: true
+            next:
+                description: 'Next version to release'
+                required: true
+
+env:
+    JAVA_VERSION: '19'
+    JAVA_DISTRO: 'zulu'
+
+jobs:
+    prepare:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v3
+
+            -   name: 'Set up Java'
+                uses: actions/setup-java@v3
+                with:
+                    java-version: ${{ env.JAVA_VERSION }}
+                    distribution: ${{ env.JAVA_DISTRO }}
+
+            -   name: 'Configure Git user'
+                run: |
+                    git config --global user.email "github-actions[bot]@users.noreply.github.com"
+                    git config --global user.name "GitHub Action"
+
+            -   name: 'Prepare release'
+                run: |
+                    RELEASE_VERSION=${{ github.event.inputs.version }}
+                    NEXT_VERSION=${{ github.event.inputs.next }}
+                    mvn -B -ntp --file pom.xml release:prepare -B -Dtag=$RELEASE_VERSION -DreleaseVersion=$RELEASE_VERSION -DdevelopmentVersion="${NEXT_VERSION}-SNAPSHOT"
