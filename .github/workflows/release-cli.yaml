@@ -26,7 +26,8 @@ jobs:
             -   name: 'Check out repository'
                 uses: actions/checkout@v3
                 with:
-                    ref: tags/${{ github.event.inputs.version }}
+                    fetch-depth: 0
+                    ref: ${{ github.event.inputs.version }}
 
             -   name: 'Set up Graal'
                 uses: graalvm/setup-graalvm@v1
