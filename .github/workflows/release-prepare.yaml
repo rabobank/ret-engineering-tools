@@ -2,6 +2,13 @@ name: Prepare RET release
 
 on:
     workflow_dispatch:
+        inputs:
+            version:
+                description: 'Version to release'
+                required: true
+            next:
+                description: 'Next version to release'
+                required: true
 
 env:
     JAVA_VERSION: '19'
