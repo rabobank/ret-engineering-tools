@@ -28,11 +28,11 @@ jobs:
 
             -   name: 'Configure Git user'
                 run: |
-                    git config --global user.email "github-actions[bot]@users.noreply.github.com"
-                    git config --global user.name "GitHub Action"
+                    git config --global user.email "skunkworks-rabot@users.noreply.github.com"
+                    git config --global user.name "Skunk Works Rabot"
 
             -   name: 'Prepare release'
                 run: |
                     RELEASE_VERSION=${{ github.event.inputs.version }}
                     NEXT_VERSION=${{ github.event.inputs.next }}
-                    mvn -B -ntp --file pom.xml release:prepare -B -Dtag=$RELEASE_VERSION -DreleaseVersion=$RELEASE_VERSION -DdevelopmentVersion="${NEXT_VERSION}-SNAPSHOT"
+                    mvn -B -ntp --file pom.xml release:prepare -B -Dusername=skunkworks-rabot -Dpassword=${{ secrets.SKUNKWORKS_RABOT_PAT}} -Dtag=$RELEASE_VERSION -DreleaseVersion=$RELEASE_VERSION -DdevelopmentVersion="${NEXT_VERSION}-SNAPSHOT"
