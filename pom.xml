@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.rabobank</groupId>
     <artifactId>ret</artifactId>
     <version>0.0.3-SNAPSHOT</version>
     <packaging>pom</packaging>
+    <name>RET Engineering Tools</name>
+    <url>https://github.com/rabobank/ret-engineering-tools</url>
+    <description>RET Engineering Tools</description>
 
     <licenses>
         <license>
@@ -18,8 +22,8 @@
         <connection>scm:git:https://github.com/rabobank/ret-engineering-tools.git</connection>
         <developerConnection>scm:git:https://github.com/rabobank/ret-engineering-tools.git</developerConnection>
         <url>https://github.com/rabobank/ret-engineering-tools</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <developers>
         <developer>
@@ -39,7 +43,9 @@
         <kotlin.version>1.8.10</kotlin.version>
         <maven.compiler.release>17</maven.compiler.release>
         <maven-assembly-plugin.version>3.5.0</maven-assembly-plugin.version>
+        <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
         <maven-release-plugin.version>3.0.0</maven-release-plugin.version>
+        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <compiler-plugin.version>3.10.1</compiler-plugin.version>
         <quarkus.platform.version>2.16.1.Final</quarkus.platform.version>
         <git-commit-id.version>5.0.0</git-commit-id.version>
@@ -55,6 +61,7 @@
         <quarkus-jgit.version>2.3.1</quarkus-jgit.version>
         <sshd-core.version>2.9.2</sshd-core.version>
         <testcontainers.version>1.17.6</testcontainers.version>
+        <maven-deploy-plugin.version>3.0.0</maven-deploy-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -246,9 +253,80 @@
                     </executions>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven-javadoc-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${maven-source-plugin.version}</version>
+                </plugin>
+
+                <plugin>
                     <groupId>org.jreleaser</groupId>
                     <artifactId>jreleaser-maven-plugin</artifactId>
                     <version>${jreleaser-maven-plugin.version}</version>
+                    <configuration>
+                        <jreleaser>
+                            <release>
+                                <github>
+                                    <tagName>{{projectVersion}}</tagName>
+                                    <releaseName>{{projectVersion}}</releaseName>
+                                    <overwrite>true</overwrite>
+                                    <changelog>
+                                        <formatted>ALWAYS</formatted>
+                                        <format>- {{commitShortHash}} {{commitTitle}}</format>
+                                        <preset>conventional-commits</preset>
+                                        <contributors>
+                                            <format>- {{contributorName}}</format>
+                                        </contributors>
+                                        <hide>
+                                            <categories>merge</categories>
+                                            <contributors>GitHub,dependabot</contributors>
+                                        </hide>
+                                    </changelog>
+                                </github>
+                            </release>
+                            <distributions>
+                                <ret-cli>
+                                    <type>NATIVE_IMAGE</type>
+                                    <artifacts>
+                                        <artifact>
+                                            <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.tar.gz</path>
+                                            <platform>linux-x86_64</platform>
+                                        </artifact>
+                                        <artifact>
+                                            <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-windows-x86_64.zip</path>
+                                            <platform>windows-x86_64</platform>
+                                        </artifact>
+                                        <artifact>
+                                            <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-osx-x86_64.zip</path>
+                                            <platform>osx-x86_64</platform>
+                                        </artifact>
+                                    </artifacts>
+                                </ret-cli>
+                            </distributions>
+                            <signing>
+                                <active>ALWAYS</active>
+                                <armored>true</armored>
+                            </signing>
+                            <deploy>
+                                <maven>
+                                    <nexus2>
+                                        <maven-central>
+                                            <active>ALWAYS</active>
+                                            <url>https://s01.oss.sonatype.org/service/local</url>
+                                            <snapshotUrl>https://s01.oss.sonatype.org/content/repositories/snapshots/</snapshotUrl>
+                                            <closeRepository>true</closeRepository>
+                                            <releaseRepository>false</releaseRepository>
+                                            <stagingRepositories>artifacts-plugin</stagingRepositories>
+                                        </maven-central>
+                                    </nexus2>
+                                </maven>
+                            </deploy>
+                        </jreleaser>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-assembly-plugin</artifactId>
@@ -259,15 +337,57 @@
                     <artifactId>os-maven-plugin</artifactId>
                     <version>${os-maven-plugin.version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${maven-deploy-plugin.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
 
-    <repositories>
-        <repository>
-            <id>mavenCentral</id>
-            <url>https://repo1.maven.org/maven2/</url>
-        </repository>
-    </repositories>
+    <profiles>
+        <profile>
+            <id>publication</id>
+            <properties>
+                <altDeploymentRepository>local::file:./target/staging-deploy</altDeploymentRepository>
+            </properties>
+            <build>
+                <defaultGoal>deploy</defaultGoal>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <attach>true</attach>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <attach>true</attach>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

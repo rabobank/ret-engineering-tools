@@ -1,0 +1,156 @@
+name: RET release pipeline
+
+on:
+    workflow_dispatch:
+        inputs:
+            version:
+                description: 'Version to release'
+                required: true
+            next:
+                description: 'Next version to release'
+                required: true
+
+env:
+    GRAAL_VERSION: '22.3.0'
+    JAVA_VERSION: '19'
+    JAVA_DISTRO: 'zulu'
+
+jobs:
+    # Set versions
+    prepare:
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Retrieve tag exists flag
+                uses: mukunku/tag-exists-action@v1.0.0
+                id: checkTag
+                with:
+                    tag: ${{ github.event.inputs.version }}
+
+            -   uses: actions/checkout@v3
+                if: steps.checkTag.outputs.exists == false
+                with:
+                    persist-credentials: false
+                    fetch-depth: 0
+
+            -   name: 'Set up Java'
+                if: steps.checkTag.outputs.exists == false
+                uses: actions/setup-java@v3
+                with:
+                    java-version: ${{ env.JAVA_VERSION }}
+                    distribution: ${{ env.JAVA_DISTRO }}
+
+            -   name: 'Configure Git user'
+                if: steps.checkTag.outputs.exists == false
+                run: |
+                    git config --global user.email "skunkworks-rabot@users.noreply.github.com"
+                    git config --global user.name "Skunk Works Rabot"
+
+            -   name: 'Prepare release'
+                if: steps.checkTag.outputs.exists == false
+                run: |
+                    RELEASE_VERSION=${{ github.event.inputs.version }}
+                    NEXT_VERSION=${{ github.event.inputs.next }}
+                    mvn -B -ntp --file pom.xml release:prepare -B -Dusername=skunkworks-rabot -Dpassword=${{ secrets.SKUNKWORKS_RABOT_PAT}} -Dtag=$RELEASE_VERSION -DreleaseVersion=$RELEASE_VERSION -DdevelopmentVersion="${NEXT_VERSION}-SNAPSHOT"
+
+    # Build RET CLI executable per runner
+    cli:
+        name: 'Build RET CLI with Graal on ${{ matrix.os }}'
+        strategy:
+            fail-fast: true
+            matrix:
+                os: [ ubuntu-latest, macOS-latest, windows-latest ]
+        runs-on: ${{ matrix.os }}
+        steps:
+            -   name: 'Check out repository'
+                uses: actions/checkout@v3
+                with:
+                    fetch-depth: 0
+
+            -   name: 'Set up Graal'
+                uses: graalvm/setup-graalvm@v1
+                with:
+                    version: ${{ env.GRAAL_VERSION }}
+                    java-version: ${{ env.JAVA_VERSION }}
+                    components: 'native-image'
+                    github-token: ${{ secrets.GITHUB_TOKEN }}
+
+            -   name: 'Cache Maven packages'
+                uses: actions/cache@v3
+                with:
+                    path: ~/.m2/repository
+                    key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+                    restore-keys: ${{ runner.os }}-maven-
+
+            -   name: 'Build Native Image'
+                run: mvn -B -ntp --file pom.xml -Pnative package
+
+            -   name: 'Create distribution'
+                run: mvn -B -ntp --file pom.xml -Pdist package -DskipTests
+
+            -   name: 'Upload build artifact'
+                uses: actions/upload-artifact@v3
+                with:
+                    name: artifacts-cli
+                    path: |
+                        ret-cli/target/distributions/*.zip
+                        ret-cli/target/distributions/*.tar.gz
+
+    # Package RET Plugin for maven central
+    plugin:
+        name: 'Package RET Plugin for maven cetral'
+        runs-on: ubuntu-latest
+
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v3
+                with:
+                    fetch-depth: 0
+
+            -   name: Setup Java
+                uses: actions/setup-java@v3
+                with:
+                    java-version: 19
+                    distribution: 'zulu'
+
+            -   name: Package artifact
+                run: |
+                    mvn -B --file pom.xml -Ppublication
+
+            -   name: 'Upload build artifact'
+                uses: actions/upload-artifact@v3
+                with:
+                    name: artifacts-plugin
+                    path: |
+                        target/staging-deploy
+
+    # Collect all release candidates and release
+    release:
+        needs: [ cli, plugin ]
+        runs-on: ubuntu-latest
+        steps:
+            -   name: 'Check out repository'
+                uses: actions/checkout@v3
+                with:
+                    persist-credentials: false # don't configure GITHUB_TOKEN as default git token
+                    fetch-depth: 0 # otherwise, pushing refs to dest repo fails
+
+            -   name: 'Download all build artifacts'
+                uses: actions/download-artifact@v3
+
+            -   name: 'Set up Java'
+                uses: actions/setup-java@v3
+                with:
+                    java-version: ${{ env.JAVA_VERSION }}
+                    distribution: ${{ env.JAVA_DISTRO }}
+
+            -   name: 'Cache Maven packages'
+                uses: actions/cache@v3
+                with:
+                    path: ~/.m2/repository
+                    key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+                    restore-keys: ${{ runner.os }}-maven-
+
+            -   name: 'Release with JReleaser'
+                env:
+                    JRELEASER_GITHUB_TOKEN: ${{ secrets.SKUNKWORKS_RABOT_PAT }}
+                run: mvn -B -ntp --file pom.xml -DartifactsDir=artifacts-cli jreleaser:full-release
