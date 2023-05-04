@@ -109,8 +109,8 @@ jobs:
             -   name: Setup Java
                 uses: actions/setup-java@v3
                 with:
-                    java-version: 19
-                    distribution: 'zulu'
+                    java-version: ${{ env.JAVA_VERSION }}
+                    distribution: ${{ env.JAVA_DISTRO }}
 
             -   name: Package artifact
                 run: |
