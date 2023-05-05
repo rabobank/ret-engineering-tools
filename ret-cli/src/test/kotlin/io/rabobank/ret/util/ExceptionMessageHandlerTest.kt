@@ -7,7 +7,6 @@ import io.quarkus.test.junit.QuarkusTest
 import io.rabobank.ret.RetConsole
 import io.rabobank.ret.config.ExceptionMessageHandler
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import picocli.CommandLine
 import picocli.CommandLine.Model.CommandSpec
@@ -21,9 +20,10 @@ class ExceptionMessageHandlerTest {
     @Test
     fun `another exception results in exit code 1`() {
         val ex = IllegalStateException("Boom!")
-        val commandLine: CommandLine = mockk()
-        every { commandLine.usageMessage } returns "Use this correctly"
-        every { commandLine.commandSpec } returns CommandSpec.create()
+        val commandLine: CommandLine = mockk {
+            every { usageMessage } returns "Use this correctly"
+            every { commandSpec } returns CommandSpec.create()
+        }
 
         val exitCode = exceptionHandler.handleExecutionException(ex, commandLine, mockk())
 
@@ -34,9 +34,10 @@ class ExceptionMessageHandlerTest {
     @Test
     fun `illegal argument results in exit code 2`() {
         val ex = IllegalArgumentException("Boom!")
-        val commandLine: CommandLine = mockk()
-        every { commandLine.usageMessage } returns "Use this correctly"
-        every { commandLine.commandSpec } returns CommandSpec.create()
+        val commandLine: CommandLine = mockk {
+            every { usageMessage } returns "Use this correctly"
+            every { commandSpec } returns CommandSpec.create()
+        }
 
         val exitCode = exceptionHandler.handleExecutionException(ex, commandLine, mockk())
 
