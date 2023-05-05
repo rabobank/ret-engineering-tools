@@ -4,7 +4,6 @@ import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.eclipse.jgit.lib.Repository
-import org.eclipse.jgit.lib.StoredConfig
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -21,10 +20,9 @@ internal class GitContextTest {
 
     @Test
     fun getRepositoryFromRemoteURL() {
-        val mockedConfig: StoredConfig = mockk {
+        every { mockedGitRepository.config } returns mockk {
             every { getString("remote", "origin", "url") } returns "git@ssh.dev.azure.com:v3/raboweb/Skunk%20Works/rabobank-engineering-tools"
         }
-        every { mockedGitRepository.config } returns mockedConfig
 
         val actualRepositoryName = gitContext.repositoryName()
 
