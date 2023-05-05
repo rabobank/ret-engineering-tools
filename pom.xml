@@ -267,6 +267,7 @@
                     <groupId>org.jreleaser</groupId>
                     <artifactId>jreleaser-maven-plugin</artifactId>
                     <version>${jreleaser-maven-plugin.version}</version>
+                    <inherited>false</inherited>
                     <configuration>
                         <jreleaser>
                             <release>
@@ -290,7 +291,7 @@
                             </release>
                             <distributions>
                                 <ret-cli>
-                                    <type>NATIVE_IMAGE</type>
+                                    <type>BINARY</type>
                                     <artifacts>
                                         <artifact>
                                             <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.tar.gz</path>
@@ -313,6 +314,7 @@
                                             <closeRepository>true</closeRepository>
                                             <releaseRepository>false</releaseRepository>
                                             <stagingRepositories>artifacts-plugin</stagingRepositories>
+                                            <verifyPom>false</verifyPom>
                                         </maven-central>
                                     </nexus2>
                                 </maven>
