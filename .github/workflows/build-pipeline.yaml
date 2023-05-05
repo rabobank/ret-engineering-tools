@@ -1,4 +1,4 @@
-name: Maven CI
+name: Maven build
 
 on:
     workflow_dispatch:
