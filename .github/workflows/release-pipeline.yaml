@@ -138,7 +138,9 @@ jobs:
                     fetch-depth: 0 # otherwise, pushing refs to dest repo fails
 
             -   name: 'Checkout tag'
-                run: git checkout --progress --force refs/tags/${{ github.event.inputs.version }}
+                run: |
+                    git fetch --all
+                    git checkout --progress --force refs/tags/${{ github.event.inputs.version }}
 
             -   name: 'Download all build artifacts'
                 uses: actions/download-artifact@v3
