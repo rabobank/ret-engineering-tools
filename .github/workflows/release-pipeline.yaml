@@ -27,26 +27,26 @@ jobs:
                     tag: ${{ github.event.inputs.version }}
 
             -   uses: actions/checkout@v3
-                if: steps.checkTag.outputs.exists == false
+                if: steps.checkTag.outputs.exists == 'false'
                 with:
                     persist-credentials: false
                     fetch-depth: 0
 
             -   name: 'Set up Java'
-                if: steps.checkTag.outputs.exists == false
+                if: steps.checkTag.outputs.exists == 'false'
                 uses: actions/setup-java@v3
                 with:
                     java-version: ${{ env.JAVA_VERSION }}
                     distribution: ${{ env.JAVA_DISTRO }}
 
             -   name: 'Configure Git user'
-                if: steps.checkTag.outputs.exists == false
+                if: steps.checkTag.outputs.exists == 'false'
                 run: |
                     git config --global user.email "skunkworks-rabot@users.noreply.github.com"
                     git config --global user.name "Skunk Works Rabot"
 
             -   name: 'Prepare release'
-                if: steps.checkTag.outputs.exists == false
+                if: steps.checkTag.outputs.exists == 'false'
                 run: |
                     RELEASE_VERSION=${{ github.event.inputs.version }}
                     NEXT_VERSION=${{ github.event.inputs.next }}
@@ -100,7 +100,7 @@ jobs:
     # Package RET Plugin for maven central
     plugin:
         needs: [ prepare ]
-        name: 'Package RET Plugin for maven cetral'
+        name: 'Package RET Plugin for maven central'
         runs-on: ubuntu-latest
 
         steps:
