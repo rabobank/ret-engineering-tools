@@ -135,9 +135,10 @@ jobs:
             -   name: 'Check out repository'
                 uses: actions/checkout@v3
                 with:
-                    ref: ${{ github.event.inputs.version }}
-                    persist-credentials: false # don't configure GITHUB_TOKEN as default git token
                     fetch-depth: 0 # otherwise, pushing refs to dest repo fails
+
+            -   name: 'Checkout tag'
+                run: git checkout --progress --force refs/tags/${{ github.event.inputs.version }}
 
             -   name: 'Download all build artifacts'
                 uses: actions/download-artifact@v3
