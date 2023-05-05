@@ -59,7 +59,7 @@ jobs:
         strategy:
             fail-fast: true
             matrix:
-                os: [ ubuntu-latest, macOS-latest ]
+                os: [ ubuntu-latest ]
         runs-on: ${{ matrix.os }}
         steps:
             -   name: 'Check out repository'
@@ -135,6 +135,7 @@ jobs:
             -   name: 'Check out repository'
                 uses: actions/checkout@v3
                 with:
+                    ref: ${{ github.event.inputs.version }}
                     persist-credentials: false # don't configure GITHUB_TOKEN as default git token
                     fetch-depth: 0 # otherwise, pushing refs to dest repo fails
 
