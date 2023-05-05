@@ -20,7 +20,7 @@ class ExceptionMessageHandlerTest {
     @Test
     fun `another exception results in exit code 1`() {
         val ex = IllegalStateException("Boom!")
-        val commandLine: CommandLine = mockk {
+        val commandLine = mockk<CommandLine> {
             every { usageMessage } returns "Use this correctly"
             every { commandSpec } returns CommandSpec.create()
         }
@@ -34,7 +34,7 @@ class ExceptionMessageHandlerTest {
     @Test
     fun `illegal argument results in exit code 2`() {
         val ex = IllegalArgumentException("Boom!")
-        val commandLine: CommandLine = mockk {
+        val commandLine = mockk<CommandLine> {
             every { usageMessage } returns "Use this correctly"
             every { commandSpec } returns CommandSpec.create()
         }
