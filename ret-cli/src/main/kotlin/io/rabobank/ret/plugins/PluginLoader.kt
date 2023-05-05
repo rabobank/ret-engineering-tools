@@ -10,7 +10,7 @@ import picocli.CommandLine.Model.CommandSpec
 import picocli.CommandLine.Model.OptionSpec
 import picocli.CommandLine.Model.PositionalParamSpec
 import picocli.CommandLine.ParseResult
-import javax.enterprise.context.ApplicationScoped
+import jakarta.enterprise.context.ApplicationScoped
 import kotlin.io.path.pathString
 
 

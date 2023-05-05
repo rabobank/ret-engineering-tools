@@ -1,7 +1,7 @@
 package io.rabobank.ret
 
 import io.quarkus.logging.Log
-import javax.enterprise.context.ApplicationScoped
+import jakarta.enterprise.context.ApplicationScoped
 
 data class SearchHit(val filterRound: FilterRound, val candidateIndex: Int)
 

@@ -3,7 +3,7 @@ package io.rabobank.ret.configuration.version
 import io.quarkus.logging.Log
 import org.eclipse.microprofile.config.ConfigProvider
 import java.util.*
-import javax.enterprise.context.ApplicationScoped
+import jakarta.enterprise.context.ApplicationScoped
 
 private const val GIT_PROPERTIES = "git.properties"
 

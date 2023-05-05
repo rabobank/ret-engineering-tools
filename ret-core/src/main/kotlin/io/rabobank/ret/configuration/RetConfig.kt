@@ -4,8 +4,8 @@ import io.rabobank.ret.util.OsUtils
 import org.eclipse.microprofile.config.inject.ConfigProperty
 import java.nio.file.Path
 import java.util.*
-import javax.enterprise.context.ApplicationScoped
-import javax.enterprise.inject.Instance
+import jakarta.enterprise.context.ApplicationScoped
+import jakarta.enterprise.inject.Instance
 
 private const val RET_VERSION = "ret_config_version"
 

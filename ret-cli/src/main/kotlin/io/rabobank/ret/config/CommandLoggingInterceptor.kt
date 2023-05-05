@@ -2,10 +2,10 @@ package io.rabobank.ret.config
 
 import io.quarkus.logging.Log
 import java.lang.annotation.Inherited
-import javax.interceptor.AroundInvoke
-import javax.interceptor.Interceptor
-import javax.interceptor.InterceptorBinding
-import javax.interceptor.InvocationContext
+import jakarta.interceptor.AroundInvoke
+import jakarta.interceptor.Interceptor
+import jakarta.interceptor.InterceptorBinding
+import jakarta.interceptor.InvocationContext
 
 @InterceptorBinding
 @Retention(AnnotationRetention.RUNTIME)

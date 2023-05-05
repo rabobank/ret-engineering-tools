@@ -2,7 +2,7 @@ package io.rabobank.ret.configuration.version
 
 import io.quarkus.arc.Unremovable
 import picocli.CommandLine
-import javax.enterprise.context.ApplicationScoped
+import jakarta.enterprise.context.ApplicationScoped
 
 @Unremovable
 @ApplicationScoped

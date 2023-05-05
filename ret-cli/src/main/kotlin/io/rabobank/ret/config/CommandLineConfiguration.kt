@@ -4,8 +4,8 @@ import io.quarkus.picocli.runtime.PicocliCommandLineFactory
 import io.rabobank.ret.RetConsole
 import io.rabobank.ret.plugins.PluginLoader
 import picocli.CommandLine
-import javax.enterprise.context.ApplicationScoped
-import javax.enterprise.inject.Produces
+import jakarta.enterprise.context.ApplicationScoped
+import jakarta.enterprise.inject.Produces
 
 @ApplicationScoped
 class CommandLineConfiguration(val pluginLoader: PluginLoader) {

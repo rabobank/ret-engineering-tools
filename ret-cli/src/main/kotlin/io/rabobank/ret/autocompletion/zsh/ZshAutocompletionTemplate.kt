@@ -3,7 +3,7 @@ package io.rabobank.ret.autocompletion.zsh
 import picocli.CommandLine
 import picocli.CommandLine.Model.OptionSpec
 import picocli.CommandLine.Model.PositionalParamSpec
-import javax.enterprise.context.ApplicationScoped
+import jakarta.enterprise.context.ApplicationScoped
 
 private const val TAB = "    "
 private const val AUTOCOMPLETION_FUNCTION_PREFIX = "function:"

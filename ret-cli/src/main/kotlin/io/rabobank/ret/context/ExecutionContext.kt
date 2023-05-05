@@ -1,6 +1,6 @@
 package io.rabobank.ret.context
 
-import javax.enterprise.context.ApplicationScoped
+import jakarta.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class ExecutionContext {

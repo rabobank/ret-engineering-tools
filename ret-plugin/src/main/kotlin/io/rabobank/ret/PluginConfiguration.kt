@@ -1,7 +1,7 @@
 package io.rabobank.ret
 
-import javax.enterprise.context.ApplicationScoped
-import javax.enterprise.inject.Produces
+import jakarta.enterprise.context.ApplicationScoped
+import jakarta.enterprise.inject.Produces
 
 @ApplicationScoped
 class PluginConfiguration {

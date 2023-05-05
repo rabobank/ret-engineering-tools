@@ -54,11 +54,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.mockito.kotlin</groupId>
-            <artifactId>mockito-kotlin</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
@@ -66,6 +61,11 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkiverse.mockk</groupId>
+            <artifactId>quarkus-junit5-mockk</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
