@@ -30,8 +30,9 @@ class PluginInitializeCommandTest {
     fun before() {
         config = TestConfig()
         retConsole = mockk(relaxed = true)
-        osUtils = mockk()
-        every { osUtils.getHomeDirectory() } returns mockUserHomeDirectory.pathString
+        osUtils = mockk {
+            every { getHomeDirectory() } returns mockUserHomeDirectory.pathString
+        }
         command = PluginInitializeCommand(jacksonObjectMapper(), config, retConsole, osUtils)
         command.commandSpec = CommandLine.Model.CommandSpec.create()
 

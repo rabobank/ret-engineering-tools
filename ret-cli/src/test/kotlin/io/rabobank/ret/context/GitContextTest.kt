@@ -21,9 +21,10 @@ internal class GitContextTest {
 
     @Test
     fun getRepositoryFromRemoteURL() {
-        val mockedConfig: StoredConfig = mockk()
+        val mockedConfig: StoredConfig = mockk {
+            every { getString("remote", "origin", "url") } returns "git@ssh.dev.azure.com:v3/raboweb/Skunk%20Works/rabobank-engineering-tools"
+        }
         every { mockedGitRepository.config } returns mockedConfig
-        every { mockedConfig.getString("remote", "origin", "url") } returns "git@ssh.dev.azure.com:v3/raboweb/Skunk%20Works/rabobank-engineering-tools"
 
         val actualRepositoryName = gitContext.repositoryName()
 
