@@ -123,59 +123,6 @@
             </properties>
         </profile>
         <profile>
-            <id>release-cli</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jreleaser</groupId>
-                        <artifactId>jreleaser-maven-plugin</artifactId>
-                        <configuration>
-                            <jreleaser>
-                                <release>
-                                    <github>
-                                        <tagName>{{projectVersion}}</tagName>
-                                        <releaseName>{{projectVersion}}</releaseName>
-                                        <overwrite>true</overwrite>
-                                        <changelog>
-                                            <formatted>ALWAYS</formatted>
-                                            <format>- {{commitShortHash}} {{commitTitle}}</format>
-                                            <preset>conventional-commits</preset>
-                                            <contributors>
-                                                <format>- {{contributorName}}</format>
-                                            </contributors>
-                                            <hide>
-                                                <categories>merge</categories>
-                                                <contributors>GitHub,dependabot</contributors>
-                                            </hide>
-                                        </changelog>
-                                    </github>
-                                </release>
-                                <distributions>
-                                    <ret-cli>
-                                        <type>NATIVE_IMAGE</type>
-                                        <artifacts>
-                                            <artifact>
-                                                <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.tar.gz</path>
-                                                <platform>linux-x86_64</platform>
-                                            </artifact>
-                                            <artifact>
-                                                <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-windows-x86_64.zip</path>
-                                                <platform>windows-x86_64</platform>
-                                            </artifact>
-                                            <artifact>
-                                                <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-osx-x86_64.zip</path>
-                                                <platform>osx-x86_64</platform>
-                                            </artifact>
-                                        </artifacts>
-                                    </ret-cli>
-                                </distributions>
-                            </jreleaser>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
             <id>dist</id>
             <activation>
                 <property>
