@@ -1,7 +1,7 @@
 package io.rabobank.ret
 
 import picocli.CommandLine.ParseResult
-import javax.enterprise.context.ApplicationScoped
+import jakarta.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class RetConsole(parseResult: ParseResult) {

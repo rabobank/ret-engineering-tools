@@ -1,6 +1,8 @@
 package io.rabobank.ret.commands
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import io.mockk.every
+import io.mockk.mockk
 import io.rabobank.ret.RetConsole
 import io.rabobank.ret.configuration.Config
 import io.rabobank.ret.configuration.ConfigurationProperty
@@ -9,8 +11,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
 import picocli.CommandLine
 import java.nio.file.Files
 import java.nio.file.Path
@@ -29,24 +29,24 @@ class PluginInitializeCommandTest {
     @BeforeEach
     fun before() {
         config = TestConfig()
-        retConsole = mock()
-        osUtils = mock()
-        whenever(osUtils.getHomeDirectory()).thenReturn(mockUserHomeDirectory.pathString)
+        retConsole = mockk(relaxed = true)
+        osUtils = mockk()
+        every { osUtils.getHomeDirectory() } returns mockUserHomeDirectory.pathString
         command = PluginInitializeCommand(jacksonObjectMapper(), config, retConsole, osUtils)
         command.commandSpec = CommandLine.Model.CommandSpec.create()
 
         val retFolder = Files.createDirectory(mockUserHomeDirectory.resolve(".ret"))
         val pluginsPath = Files.createDirectory(retFolder.resolve("plugins"))
         val demoPlugin = "demo-plugin.dylib"
-        val mockPlugin = Files.createFile(pluginsPath.resolve(demoPlugin))
+        Files.createFile(pluginsPath.resolve(demoPlugin))
 
         command.pluginName = "demo-plugin.dylib"
     }
 
     @Test
     fun `should create plugin information file`() {
-        whenever(retConsole.prompt("Enter your Rabobank project:", null)).thenReturn("myProject")
-        whenever(retConsole.prompt("Enter your Rabobank organisation:", null)).thenReturn("myOrganisation")
+        every { retConsole.prompt("Enter your Rabobank project:", null) } returns "myProject"
+        every { retConsole.prompt("Enter your Rabobank organisation:", null) } returns "myOrganisation"
 
         command.run()
         assertThat(mockUserHomeDirectory.resolve(".ret/plugins/demo-plugin.plugin")).exists()
@@ -54,8 +54,8 @@ class PluginInitializeCommandTest {
 
     @Test
     fun newProperty() {
-        whenever(retConsole.prompt("Enter your Rabobank project:", null)).thenReturn("myProject")
-        whenever(retConsole.prompt("Enter your Rabobank organisation:", null)).thenReturn("myOrganisation")
+        every { retConsole.prompt("Enter your Rabobank project:", null) } returns "myProject"
+        every { retConsole.prompt("Enter your Rabobank organisation:", null) } returns "myOrganisation"
 
 
         command.run()
@@ -69,13 +69,13 @@ class PluginInitializeCommandTest {
         config["project"] = "oldProject"
         config["organisation"] = "oldOrganisation"
 
-        whenever(retConsole.prompt("Enter your Rabobank project:", "oldProject")).thenReturn("newProject")
-        whenever(
+        every { retConsole.prompt("Enter your Rabobank project:", "oldProject") } returns "newProject"
+        every {
             retConsole.prompt(
                 "Enter your Rabobank organisation:",
                 "oldOrganisation"
             )
-        ).thenReturn("newOrganisation")
+        } returns "newOrganisation"
 
         command.run()
 
@@ -88,8 +88,8 @@ class PluginInitializeCommandTest {
         config["project"] = "oldProject"
         config["organisation"] = "oldOrganisation"
 
-        whenever(retConsole.prompt("Enter your Rabobank project:", "oldProject")).thenReturn("")
-        whenever(retConsole.prompt("Enter your Rabobank organisation:", "oldOrganisation")).thenReturn("")
+        every { retConsole.prompt("Enter your Rabobank project:", "oldProject") } returns ""
+        every { retConsole.prompt("Enter your Rabobank organisation:", "oldOrganisation") } returns ""
 
         command.run()
 

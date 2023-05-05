@@ -5,8 +5,8 @@ import io.rabobank.ret.plugin.Plugin
 import io.rabobank.ret.plugin.PluginDefinition
 import io.rabobank.ret.util.OsUtils
 import java.nio.file.Path
-import javax.enterprise.context.ApplicationScoped
-import javax.enterprise.inject.Produces
+import jakarta.enterprise.context.ApplicationScoped
+import jakarta.enterprise.inject.Produces
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.walk
 

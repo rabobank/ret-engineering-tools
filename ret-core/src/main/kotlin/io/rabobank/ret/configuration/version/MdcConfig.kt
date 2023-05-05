@@ -2,8 +2,8 @@ package io.rabobank.ret.configuration.version
 
 import io.quarkus.runtime.StartupEvent
 import org.jboss.logging.MDC
-import javax.enterprise.context.ApplicationScoped
-import javax.enterprise.event.Observes
+import jakarta.enterprise.context.ApplicationScoped
+import jakarta.enterprise.event.Observes
 
 @ApplicationScoped
 class MdcConfig(private val versionProperties: VersionProperties) {

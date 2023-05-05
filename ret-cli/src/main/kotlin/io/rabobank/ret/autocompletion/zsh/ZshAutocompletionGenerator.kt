@@ -2,7 +2,7 @@ package io.rabobank.ret.autocompletion.zsh
 
 import picocli.CommandLine
 import picocli.CommandLine.Model.CommandSpec
-import javax.enterprise.context.ApplicationScoped
+import jakarta.enterprise.context.ApplicationScoped
 
 private const val SHEBANG = "#!/bin/zsh"
 

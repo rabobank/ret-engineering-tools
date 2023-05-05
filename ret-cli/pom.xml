@@ -56,13 +56,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-junit5-mockito</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito.kotlin</groupId>
-            <artifactId>mockito-kotlin</artifactId>
+            <groupId>io.quarkiverse.mockk</groupId>
+            <artifactId>quarkus-junit5-mockk</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

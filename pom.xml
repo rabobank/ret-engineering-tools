@@ -41,29 +41,30 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
-        <kotlin.version>1.8.10</kotlin.version>
+        <kotlin.version>1.8.21</kotlin.version>
         <maven.compiler.release>17</maven.compiler.release>
         <dokka-maven-plugin.version>1.8.10</dokka-maven-plugin.version>
         <maven-assembly-plugin.version>3.5.0</maven-assembly-plugin.version>
-        <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+        <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
         <maven-release-plugin.version>3.0.0</maven-release-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-        <compiler-plugin.version>3.10.1</compiler-plugin.version>
-        <quarkus.platform.version>2.16.1.Final</quarkus.platform.version>
+        <compiler-plugin.version>3.11.0</compiler-plugin.version>
+        <quarkus.platform.version>3.0.2.Final</quarkus.platform.version>
         <git-commit-id.version>5.0.0</git-commit-id.version>
-        <os-maven-plugin.version>1.7.0</os-maven-plugin.version>
-        <surefire-plugin.version>2.22.2</surefire-plugin.version>
-        <failsafe-plugin.version>2.22.2</failsafe-plugin.version>
-        <jandex-maven-plugin.version>1.2.1</jandex-maven-plugin.version>
+        <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
+        <surefire-plugin.version>3.0.0</surefire-plugin.version>
+        <failsafe-plugin.version>3.0.0</failsafe-plugin.version>
+        <jandex-maven-plugin.version>1.2.3</jandex-maven-plugin.version>
         <jreleaser-maven-plugin.version>1.6.0</jreleaser-maven-plugin.version>
 
         <assertj-core.version>3.24.2</assertj-core.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <mockito-kotlin.version>4.1.0</mockito-kotlin.version>
-        <quarkus-jgit.version>2.3.1</quarkus-jgit.version>
+        <quarkus-jgit.version>3.0.0</quarkus-jgit.version>
+        <quarkus-junit5-mockk.version>2.0.0</quarkus-junit5-mockk.version>
         <sshd-core.version>2.9.2</sshd-core.version>
-        <testcontainers.version>1.17.6</testcontainers.version>
-        <maven-deploy-plugin.version>3.0.0</maven-deploy-plugin.version>
+        <testcontainers.version>1.18.0</testcontainers.version>
+        <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -91,6 +92,12 @@
                 <version>${commons-lang3.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>io.quarkiverse.mockk</groupId>
+                <artifactId>quarkus-junit5-mockk</artifactId>
+                <version>${quarkus-junit5-mockk.version}</version>
+                <scope>test</scope>
+            </dependency>
             <dependency>
                 <groupId>org.mockito.kotlin</groupId>
                 <artifactId>mockito-kotlin</artifactId>
@@ -286,7 +293,7 @@
                                         </contributors>
                                         <hide>
                                             <categories>merge</categories>
-                                            <contributors>GitHub,dependabot</contributors>
+                                            <contributors>GitHub,dependabot,Skunk Works Rabot</contributors>
                                         </hide>
                                     </changelog>
                                 </github>

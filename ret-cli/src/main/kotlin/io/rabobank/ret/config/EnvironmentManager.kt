@@ -4,8 +4,8 @@ import io.quarkus.logging.Log
 import io.rabobank.ret.config.Environment.CLI
 import io.rabobank.ret.config.Environment.valueOf
 import org.eclipse.microprofile.config.inject.ConfigProperty
-import javax.enterprise.context.ApplicationScoped
-import javax.enterprise.inject.Produces
+import jakarta.enterprise.context.ApplicationScoped
+import jakarta.enterprise.inject.Produces
 
 @ApplicationScoped
 class EnvironmentManager {

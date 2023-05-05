@@ -3,7 +3,7 @@ package io.rabobank.ret.util
 import org.apache.commons.lang3.SystemUtils.IS_OS_LINUX
 import org.apache.commons.lang3.SystemUtils.IS_OS_MAC
 import org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS
-import javax.enterprise.context.ApplicationScoped
+import jakarta.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class OsUtils {

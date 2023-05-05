@@ -1,12 +1,12 @@
 package io.rabobank.ret.context
 
+import io.mockk.every
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.lib.StoredConfig
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.mock
-import org.mockito.kotlin.whenever
 
 internal class GitContextTest {
 
@@ -15,16 +15,15 @@ internal class GitContextTest {
 
     @BeforeEach
     fun before() {
-        mockedGitRepository = mock(Repository::class.java)
+        mockedGitRepository = mockk()
         gitContext = GitContext(mockedGitRepository)
     }
 
     @Test
     fun getRepositoryFromRemoteURL() {
-        val mockedConfig = mock(StoredConfig::class.java)
-        whenever(mockedGitRepository.config).thenReturn(mockedConfig)
-        whenever(mockedConfig.getString("remote", "origin", "url"))
-            .thenReturn("git@ssh.dev.azure.com:v3/raboweb/Skunk%20Works/rabobank-engineering-tools")
+        val mockedConfig: StoredConfig = mockk()
+        every { mockedGitRepository.config } returns mockedConfig
+        every { mockedConfig.getString("remote", "origin", "url") } returns "git@ssh.dev.azure.com:v3/raboweb/Skunk%20Works/rabobank-engineering-tools"
 
         val actualRepositoryName = gitContext.repositoryName()
 
@@ -34,7 +33,7 @@ internal class GitContextTest {
     @Test
     fun getBranchName() {
         val branchName = "feature/my-branch"
-        whenever(mockedGitRepository.branch).thenReturn(branchName)
+        every { mockedGitRepository.branch } returns branchName
 
         val result = gitContext.branchName()
         assertThat(result).isEqualTo(branchName)
