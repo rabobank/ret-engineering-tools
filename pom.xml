@@ -51,7 +51,7 @@
         <quarkus.platform.version>3.0.2.Final</quarkus.platform.version>
         <git-commit-id.version>5.0.0</git-commit-id.version>
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
-        <surefire-plugin.version>3.0.0</surefire-plugin.version>
+        <surefire-plugin.version>3.1.0</surefire-plugin.version>
         <failsafe-plugin.version>3.1.0</failsafe-plugin.version>
         <jandex-maven-plugin.version>1.2.3</jandex-maven-plugin.version>
         <jreleaser-maven-plugin.version>1.6.0</jreleaser-maven-plugin.version>
