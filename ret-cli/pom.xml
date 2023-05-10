@@ -135,7 +135,7 @@
                         <configuration>
                             <attach>false</attach>
                             <appendAssemblyId>false</appendAssemblyId>
-                            <finalName>${project.artifactId}-${project.version}-${os.detected.classifier}</finalName>
+                            <finalName>${project.build.finalName}-${project.version}-${os.detected.classifier}</finalName>
                             <outputDirectory>${project.build.directory}/distributions</outputDirectory>
                             <workDirectory>${project.build.directory}/assembly/work</workDirectory>
                             <descriptors>

@@ -298,15 +298,19 @@
                                 </github>
                             </release>
                             <distributions>
-                                <ret-cli>
+                                <ret>
                                     <type>BINARY</type>
                                     <artifacts>
                                         <artifact>
-                                            <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.tar.gz</path>
+                                            <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.zip</path>
                                             <platform>linux-x86_64</platform>
                                         </artifact>
+                                        <artifact>
+                                            <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-osx-x86_64.zip</path>
+                                            <platform>osx-x86_64</platform>
+                                        </artifact>
                                     </artifacts>
-                                </ret-cli>
+                                </ret>
                             </distributions>
                             <signing>
                                 <active>ALWAYS</active>
@@ -327,6 +331,11 @@
                                     </nexus2>
                                 </maven>
                             </deploy>
+                            <packagers>
+                                <brew>
+                                    <active>ALWAYS</active>
+                                </brew>
+                            </packagers>
                         </jreleaser>
                     </configuration>
                 </plugin>
