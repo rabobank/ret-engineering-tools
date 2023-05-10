@@ -59,7 +59,7 @@ jobs:
         strategy:
             fail-fast: true
             matrix:
-                os: [ ubuntu-latest ]
+                os: [ ubuntu-latest, macOS-latest ]
         runs-on: ${{ matrix.os }}
         steps:
             -   name: 'Check out repository'
