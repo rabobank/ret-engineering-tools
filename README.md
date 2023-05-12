@@ -83,7 +83,6 @@ Use the [Quarkus initializer](https://code.quarkus.io/) to create a Quarkus proj
 ### Step 2 - Add the ret-plugin dependency
 
 ```xml
-
 <dependency>
     <groupId>io.github.rabobank</groupId>
     <artifactId>ret-plugin</artifactId>
@@ -105,7 +104,7 @@ Use the [Quarkus initializer](https://code.quarkus.io/) to create a Quarkus proj
     ]
 )
 @RegisterForReflection(targets = [RetContext::class]) (3)
-class SplunkEntryCommand {
+class MyPluginEntryCommand {
 }
 ```
 - (1): Enter the name of your plugin. This is the command that will be exposed to RET. For example:
