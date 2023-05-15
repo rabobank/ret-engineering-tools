@@ -43,7 +43,7 @@
         <kotlin.version>1.8.21</kotlin.version>
         <maven.compiler.release>17</maven.compiler.release>
         <dokka-maven-plugin.version>1.8.10</dokka-maven-plugin.version>
-        <maven-assembly-plugin.version>3.5.0</maven-assembly-plugin.version>
+        <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
         <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
         <maven-release-plugin.version>3.0.0</maven-release-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
