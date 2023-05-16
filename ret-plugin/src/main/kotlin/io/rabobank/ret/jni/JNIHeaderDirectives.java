@@ -1,10 +1,16 @@
 package io.rabobank.ret.jni;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.graalvm.nativeimage.c.CContext;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.apache.commons.lang3.SystemUtils.IS_OS_LINUX;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_MAC;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
+import static org.apache.commons.lang3.SystemUtils.JAVA_HOME;
 
 final class JNIHeaderDirectives implements CContext.Directives {
     @Override
@@ -20,10 +26,26 @@ final class JNIHeaderDirectives implements CContext.Directives {
     }
 
     private static File[] findJNIHeaders() throws IllegalStateException {
-        final File jreHome = new File(System.getProperty("java.home"));
+        final File jreHome = new File(JAVA_HOME);
         return new File[]{
             new File(jreHome.getAbsolutePath(), "include/jni.h"),
-            new File(jreHome.getAbsolutePath(), "include/darwin/jni_md.h")
+            new File(jreHome.getAbsolutePath(), getJniMdDirectory())
         };
+    }
+
+    private static String getJniMdDirectory() {
+        if(IS_OS_MAC) {
+            return "include/darwin/jni_md.h";
+        }
+
+        if(IS_OS_LINUX) {
+            return "include/linux/jni_md.h";
+        }
+
+        if(IS_OS_WINDOWS) {
+            return "include/windows/jni_md.h";
+        }
+
+        throw new NotImplementedException("Unsupported operation system");
     }
 }
