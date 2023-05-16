@@ -324,7 +324,7 @@
                                             <url>https://s01.oss.sonatype.org/service/local</url>
                                             <snapshotUrl>https://s01.oss.sonatype.org/content/repositories/snapshots/</snapshotUrl>
                                             <closeRepository>true</closeRepository>
-                                            <releaseRepository>false</releaseRepository>
+                                            <releaseRepository>true</releaseRepository>
                                             <stagingRepositories>artifacts-plugin</stagingRepositories>
                                             <verifyPom>false</verifyPom>
                                         </maven-central>
