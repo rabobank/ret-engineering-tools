@@ -8,13 +8,11 @@ import picocli.CommandLine.Model.CommandSpec
 
 object IntrospectionUtil {
 
-    fun introspect(commandSpec: CommandSpec, pluginName: String): PluginDefinition {
-        return PluginDefinition(
-            pluginName,
-            listOf(generateCommand(commandSpec)),
-            loadCustomZshAutocompletion()
-        )
-    }
+    fun introspect(commandSpec: CommandSpec, pluginName: String) = PluginDefinition(
+        pluginName,
+        listOf(generateCommand(commandSpec)),
+        loadCustomZshAutocompletion()
+    )
 
     private fun loadCustomZshAutocompletion(): String? =
         javaClass.getResourceAsStream("/autocompletion/zsh/completions.zsh")

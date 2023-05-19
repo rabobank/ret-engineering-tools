@@ -6,14 +6,14 @@ import java.nio.file.Path
 @RegisterForReflection
 data class Plugin(
     val pluginDefinition: PluginDefinition,
-    val pluginLocation: Path
+    val pluginLocation: Path,
 )
 
 @RegisterForReflection
 data class PluginDefinition(
     val libName: String,
     val commands: List<PluginCommand>,
-    val customZshAutocompletion: String?
+    val customZshAutocompletion: String?,
 )
 
 @RegisterForReflection
@@ -23,7 +23,7 @@ data class PluginCommand(
     val options: List<Option>,
     val subcommands: List<PluginCommand>,
     val description: String? = null,
-    val hidden: Boolean = false
+    val hidden: Boolean = false,
 )
 
 @RegisterForReflection
