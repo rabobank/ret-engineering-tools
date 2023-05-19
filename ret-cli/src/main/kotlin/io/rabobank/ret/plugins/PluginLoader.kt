@@ -1,18 +1,18 @@
 package io.rabobank.ret.plugins
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.rabobank.ret.RetContext
 import io.rabobank.ret.config.Environment
 import io.rabobank.ret.context.ExecutionContext
 import io.rabobank.ret.plugin.Plugin
 import io.rabobank.ret.plugin.PluginCommand
+import jakarta.enterprise.context.ApplicationScoped
 import picocli.CommandLine
 import picocli.CommandLine.Model.CommandSpec
 import picocli.CommandLine.Model.OptionSpec
 import picocli.CommandLine.Model.PositionalParamSpec
 import picocli.CommandLine.ParseResult
-import jakarta.enterprise.context.ApplicationScoped
 import kotlin.io.path.pathString
-
 
 @ApplicationScoped
 class PluginLoader(
@@ -29,7 +29,7 @@ class PluginLoader(
 
                 PluginCommandEntry(
                     it.name,
-                    spec
+                    spec,
                 )
             }
         }.toList()
@@ -39,7 +39,7 @@ class PluginLoader(
         command: PluginCommand,
         topCommand: String,
         commandLine: CommandLine,
-        plugin: Plugin
+        plugin: Plugin,
     ): CommandSpec {
         val commandSpec = CommandSpec.wrapWithoutInspection(
             Runnable {
@@ -47,21 +47,22 @@ class PluginLoader(
                 val retContext = createRetContext(commandLine.parseResult, topCommand)
                 val isolate = RetPlugin.createIsolate()
                 RetPlugin.invoke(isolate, objectMapper.writeValueAsString(retContext))
-            })
+            },
+        )
 
         commandSpec.usageMessage().description(command.description)
         commandSpec.usageMessage().hidden(command.hidden)
 
         command.arguments.forEach {
             commandSpec.addPositional(
-                PositionalParamSpec.builder().paramLabel(it.name).index(it.position).arity(it.arity).completionCandidates(it.completionCandidates).build()
+                PositionalParamSpec.builder().paramLabel(it.name).index(it.position).arity(it.arity).completionCandidates(it.completionCandidates).build(),
             )
         }
 
         command.options.forEach {
             commandSpec.addOption(
                 OptionSpec.builder(it.names.toTypedArray()).type(Class.forName(it.type)).completionCandidates(it.completionCandidates)
-                    .build()
+                    .build(),
             )
         }
 
@@ -74,10 +75,10 @@ class PluginLoader(
 
     private fun createRetContext(parseResult: ParseResult, topCommand: String): RetContext {
         return RetContext(
-            parseResult.originalArgs().filter { it != topCommand }.joinToString(" "),
+            parseResult.originalArgs().filter { it != topCommand },
             environment.name,
             executionContext.repositoryName(),
-            executionContext.branchName()
+            executionContext.branchName(),
         )
     }
 }
