@@ -50,10 +50,11 @@ class PluginLoader(
             })
 
         commandSpec.usageMessage().description(command.description)
+        commandSpec.usageMessage().hidden(command.hidden)
 
         command.arguments.forEach {
             commandSpec.addPositional(
-                PositionalParamSpec.builder().paramLabel(it.name).completionCandidates(it.completionCandidates).build()
+                PositionalParamSpec.builder().paramLabel(it.name).index(it.position).arity(it.arity).completionCandidates(it.completionCandidates).build()
             )
         }
 

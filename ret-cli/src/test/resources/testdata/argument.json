@@ -1,0 +1,19 @@
+{
+    "libName": "test-plugin",
+    "commands": [
+        {
+            "name": "test",
+            "description": "description",
+            "arguments": [
+                {
+                    "name": "argumentName",
+                    "position": "0..3",
+                    "completionCandidates": ["completionCandidate"],
+                    "arity": "0..*"
+                }
+            ],
+            "options": [],
+            "subcommands": []
+        }
+    ]
+}

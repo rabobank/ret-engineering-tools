@@ -23,13 +23,15 @@ data class PluginCommand(
     val options: List<Option>,
     val subcommands: List<PluginCommand>,
     val description: String? = null,
+    val hidden: Boolean = false
 )
 
 @RegisterForReflection
 data class Argument(
     val name: String,
-    val position: Int,
+    val position: String? = null,
     val completionCandidates: List<String> = emptyList(),
+    val arity: String? = null,
 )
 
 @RegisterForReflection
