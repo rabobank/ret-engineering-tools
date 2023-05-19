@@ -1,7 +1,5 @@
 package io.rabobank.ret.plugins
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.rabobank.ret.config.Environment
 import io.rabobank.ret.context.ExecutionContext
