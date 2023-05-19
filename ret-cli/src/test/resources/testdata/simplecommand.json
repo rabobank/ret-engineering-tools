@@ -1,0 +1,12 @@
+{
+    "libName": "test-plugin",
+    "commands": [
+        {
+            "name": "test",
+            "description": "description",
+            "arguments": [],
+            "options": [],
+            "subcommands": []
+        }
+    ]
+}

@@ -1,0 +1,18 @@
+{
+    "libName": "test-plugin",
+    "commands": [
+        {
+            "name": "test",
+            "description": "description",
+            "arguments": [],
+            "options": [
+                {
+                    "names": ["-o", "--option"],
+                    "type": "java.lang.String",
+                    "completionCandidates": ["completionCandidate"]
+                }
+            ],
+            "subcommands": []
+        }
+    ]
+}
