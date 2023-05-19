@@ -2,6 +2,7 @@ package io.rabobank.ret.plugins
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.rabobank.ret.config.Environment
 import io.rabobank.ret.context.ExecutionContext
 import io.rabobank.ret.plugin.Plugin
@@ -13,7 +14,7 @@ import picocli.CommandLine.Command
 import java.nio.file.Path
 
 class PluginLoaderTest {
-    private val objectMapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
+    private val objectMapper = jacksonObjectMapper()
     private val commandLine = CommandLine(EmptyCommand())
 
     @Test
