@@ -138,7 +138,8 @@ class MySubCommand(private val browserUtils: BrowserUtils) : Runnable { // (2)
 
 Apart from `BrowserUtils`, you could also inject `RetContext`, which gives you information about e.g. the environment and the Git context.
 
-**Note**: The entry command is also a `Command`, so you could also implement `Runnable` there, if you want to be able to execute it. Similarly, you could further
+**Note**: The entry command is also a `Command`, so you could also implement `Runnable` there, if you want to be able to execute it.
+In that case, you have to [customize the test setup below a bit](#test-setup-for-entry-command).
 
 ### Step 5 - Test your plugin
 
@@ -154,12 +155,32 @@ If you want to write unit tests, you can use a `CommandLine` object to invoke yo
 class MySubCommandTest {
 
     val browserUtils = mock<BrowserUtils>()
-    private val command = CommandLine(MySubCommand(browserUtils))
+    private val commandLine = CommandLine(MySubCommand(browserUtils))
 
     @Test
     fun `should open google`() {
-        command.execute() // you can specify command line arguments here if used by your command, like execute("how", "to", "walk")
+        commandLine.execute() // you can specify command line arguments here if used by your command, like execute("how", "to", "walk")
         verify(browserUtils).openUrl("https://www.google.com")
+    }
+}
+```
+
+#### Test Setup for Entry Command
+On top of what is written above, when you are testing the implementation of your entry command, you have to provide a custom picocli `IFacotry`, as the `PluginInitializeCommand` cannot be created automatically.
+To provide a simple mock, you can do the following:
+```kotlin
+// ...
+private val commandLine = CommandLine(MyPluginEntryCommand(), CustomInitializationFactory())
+// ...
+
+class CustomInitializationFactory : IFactory {
+    private val pluginInitializeCommand: PluginInitializeCommand = mock()
+    override fun <K : Any?> create(cls: Class<K>?): K {
+        return if (cls?.isInstance(pluginInitializeCommand) == true) {
+            cls.cast(pluginInitializeCommand)
+        } else {
+            CommandLine.defaultFactory().create(cls)
+        }
     }
 }
 ```
