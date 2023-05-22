@@ -35,6 +35,10 @@ brew install ret      # Install RET
 ret configure autocomplete zsh # This will output a command you have to run
 ```
 
+#### Install Plugins
+We have a [plugin repository](https://github.com/rabobank/ret-plugins) where your can download and install the plugins we developed.
+Further on, you can read how to [create you own plugins](#create-your-own-plugin) for RET.
+
 ## What makes RET so special?
 
 To make RET intuitive and fast, we have three major aspects that are used throughout all RET commands.
