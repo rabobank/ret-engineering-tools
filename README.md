@@ -22,8 +22,6 @@ Use RET!
 
 ### MacOS Install
 
-**Homebrew**
-
 #### Install RET
 
 ```shell
