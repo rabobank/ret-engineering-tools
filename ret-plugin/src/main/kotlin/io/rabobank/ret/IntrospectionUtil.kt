@@ -11,7 +11,7 @@ object IntrospectionUtil {
     fun introspect(commandSpec: CommandSpec, pluginName: String) = PluginDefinition(
         pluginName,
         listOf(generateCommand(commandSpec)),
-        loadCustomZshAutocompletion()
+        loadCustomZshAutocompletion(),
     )
 
     private fun loadCustomZshAutocompletion(): String? =
@@ -23,7 +23,7 @@ object IntrospectionUtil {
         val commandName = commandSpec.name()
 
         val arguments = commandSpec.positionalParameters().map {
-            Argument(it.paramLabel(), it.index().originalValue(), it.completionCandidates()?.toList() ?: emptyList(), it.arity().originalValue())
+            Argument(it.paramLabel(), it.index().toString(), it.completionCandidates()?.toList() ?: emptyList(), it.arity().toString())
         }
         val options = commandSpec.options()
             .map { Option(it.names().toList(), it.type().canonicalName, it.completionCandidates()?.toList() ?: emptyList()) }
@@ -43,7 +43,7 @@ object IntrospectionUtil {
             options,
             subcommands,
             description,
-            hidden
+            hidden,
         )
     }
 }
