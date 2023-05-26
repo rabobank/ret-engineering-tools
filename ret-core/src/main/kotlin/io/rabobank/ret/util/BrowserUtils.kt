@@ -1,11 +1,21 @@
 package io.rabobank.ret.util
 
-import org.apache.commons.lang3.SystemUtils.*
 import jakarta.enterprise.context.ApplicationScoped
+import org.apache.commons.lang3.SystemUtils.IS_OS_LINUX
+import org.apache.commons.lang3.SystemUtils.IS_OS_MAC
+import org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS
 
+/**
+ * Utils to open a Browser (to be injected)
+ *
+ * Class used to open urls in an internet browser, independent of underlying operating system.
+ */
 @ApplicationScoped
 class BrowserUtils {
 
+    /**
+     * Open the provided [url] in a browser
+     */
     fun openUrl(url: String) {
         when {
             IS_OS_WINDOWS -> openUrlWindows(url)
