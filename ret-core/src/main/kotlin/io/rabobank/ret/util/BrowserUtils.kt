@@ -6,7 +6,7 @@ import org.apache.commons.lang3.SystemUtils.IS_OS_MAC
 import org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS
 
 /**
- * Utils to open a Browser (to be injected)
+ * Utils to open a Browser
  *
  * Class used to open urls in an internet browser, independent of underlying operating system.
  */
@@ -14,7 +14,7 @@ import org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS
 class BrowserUtils {
 
     /**
-     * Open the provided [url] in a browser
+     * Open the provided [url] in a browser.
      */
     fun openUrl(url: String) {
         when {

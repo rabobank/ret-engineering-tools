@@ -6,15 +6,15 @@ import org.apache.commons.lang3.SystemUtils.IS_OS_MAC
 import org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS
 
 /**
- * Utils for the Operating System (to be injected)
+ * Utils for the Operating System
  *
  * Class used to interact with the operating system, independent of underlying operating system.
  */
 @ApplicationScoped
 class OsUtils {
     /**
-     * Get the path of home directory of the user, independent of OS
-     * @return the home directory of the user
+     * Get the path of home directory of the user, independent of OS.
+     * @return the home directory of the user.
      */
     fun getHomeDirectory(): String =
         when {
@@ -24,8 +24,8 @@ class OsUtils {
         }
 
     /**
-     * Get the path of the directory where ret files and configurations are stored (not configurable)
-     * @return the ret directory
+     * Get the path of the directory where RET files and configurations are stored (not configurable).
+     * @return the RET directory.
      */
     fun getRetHomeDirectory(): String = "${getHomeDirectory()}/.ret"
 }

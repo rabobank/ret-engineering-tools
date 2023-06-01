@@ -24,11 +24,11 @@ data class FilterRound(val filter: String, val startIndex: Int, val endIndex: In
 }
 
 /**
- * Match results like IntelliJ (to be injected)
+ * Match results like IntelliJ
  *
- * This class is used to match a string of characters to a possible candidate, based on partial string matching.
+ * This class is used to match a string of characters to a possible candidate, based on partial string matching. The matching copies the behaviour of e.g. searching for classes in IntelliJ.
+ *
  * Example: "as" will positively match with "Admin Service" or "admin-service", and so will "adser".
- * The matching copies the behaviour of e.g. searching for classes in IntelliJ
  */
 @ApplicationScoped
 class IntelliSearch {
@@ -40,8 +40,9 @@ class IntelliSearch {
 
     /**
      * returns whether [filter] matches the [candidate] string, based on partial string matching.
-     * Example: [filter] "as" will positively match "Admin Service"
-     * @return whether the result is a match
+     *
+     * Example: [filter] "as" will positively match "Admin Service".
+     * @return whether the result is a match.
      */
     fun matches(filter: String, candidate: String): Boolean {
         if (BREAK_CHARACTER_REGEX.replace(candidate, "").contains(BREAK_CHARACTER_REGEX.replace(filter, ""), true)) {

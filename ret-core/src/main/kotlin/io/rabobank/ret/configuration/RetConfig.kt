@@ -12,7 +12,7 @@ private const val RET_VERSION = "ret_config_version"
 /**
  * Access the RET Configurations
  *
- * This class can be injected to access configurations set by the user.
+ * This class gives to access configurations set by the user.
  */
 @ApplicationScoped
 class RetConfig(
@@ -34,22 +34,22 @@ class RetConfig(
     }
 
     /**
-     * Get the [key] property from the user configurations
+     * Get the [key] property from the user configurations.
      *
-     * @return The configured value for [key], or null if not configured
+     * @return The configured value for [key], or null if not configured.
      */
     override operator fun get(key: String) = properties[key] as String?
 
     /**
      * Set the [value] to property [key] in the user configurations.
-     * This is automatically called when initializing a plugin, so you normally do not call this yourself
+     * This is automatically called when initializing a plugin, so you normally do not call this yourself.
      */
     override operator fun set(key: String, value: String) {
         properties[key] = value
     }
 
     /**
-     * Configure all defined configuration properties, based on the provided function and saves to the configuration file
+     * Configure all defined configuration properties, based on the provided function and saves to the configuration file.
      * This is automatically called when initializing a plugin, so you normally do not call this yourself.
      */
     override fun configure(function: (ConfigurationProperty) -> Unit) {
