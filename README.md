@@ -141,6 +141,7 @@ class MySubCommand(private val browserUtils: BrowserUtils) : Runnable { // (2)
 - (3): The `BrowserUtils` let you open a URL, independent of which OS you are running it on
 
 Apart from `BrowserUtils`, you could also inject `RetContext`, which gives you information about e.g. the environment and the Git context.
+There are more utility/helper classes available, for which the [docs can be found here](https://javadoc.io/doc/io.github.rabobank/ret-core/latest/index.html).
 
 **Note**: The entry command is also a `Command`, so you could also implement `Runnable` there, if you want to be able to execute it.
 In that case, you have to [customize the test setup below a bit](#test-setup-for-entry-command).
