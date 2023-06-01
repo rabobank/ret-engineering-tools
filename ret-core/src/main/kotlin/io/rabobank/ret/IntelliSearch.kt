@@ -39,7 +39,7 @@ class IntelliSearch {
     }
 
     /**
-     * returns whether [filter] matches the [candidate] string, based on partial string matching.
+     * Returns whether [filter] matches the [candidate] string, based on partial string matching.
      *
      * Example: [filter] "as" will positively match "Admin Service".
      * @return whether the result is a match.
