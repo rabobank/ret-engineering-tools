@@ -9,7 +9,7 @@ import org.jboss.logging.MDC
  * MDC configuration
  *
  * Sets the version properties into the MDC, to enrich the log messages.
- * Typically, you don't use this explicitly when creating a plugin.
+ * This is done automatically, so you don't need to use this class in your plugin.
  */
 @ApplicationScoped
 class MdcConfig(private val versionProperties: VersionProperties) {
