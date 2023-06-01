@@ -4,7 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped
 import picocli.CommandLine.ParseResult
 
 /**
- * The Ret Console
+ * The RET Console
  *
  * This class is used to interact with the user by outputting messages, errors and prompting for responses.
  */
