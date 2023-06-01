@@ -5,12 +5,20 @@ import io.rabobank.ret.IntrospectionUtil
 import io.rabobank.ret.RetConsole
 import io.rabobank.ret.configuration.Config
 import io.rabobank.ret.util.OsUtils
-import picocli.CommandLine.*
+import picocli.CommandLine.Command
 import picocli.CommandLine.Model.CommandSpec
+import picocli.CommandLine.Parameters
+import picocli.CommandLine.Spec
 import java.io.File
 import java.io.FileWriter
 import java.nio.file.Path
 
+/**
+ * Plugin Initialize Command
+ *
+ * This is a mandatory sub command for any RET plugin that you create. RET will use it when executing `ret plugin initialize your-plugin`.
+ * With this, RET will be able to run the plugin commands, automatically add autocompletion for the plugin, and prompt the user for any property that needs to be configured.
+ */
 @Command(
     name = "initialize",
     hidden = true,
@@ -19,14 +27,14 @@ class PluginInitializeCommand(
     private val objectMapper: ObjectMapper,
     private val config: Config,
     private val retConsole: RetConsole,
-    osUtils: OsUtils
+    osUtils: OsUtils,
 ) : Runnable {
     @Spec
     lateinit var commandSpec: CommandSpec
 
     @Parameters(
         arity = "1",
-        paramLabel = "<plugin name>"
+        paramLabel = "<plugin name>",
     )
     lateinit var pluginName: String
 
@@ -63,5 +71,4 @@ class PluginInitializeCommand(
         val input = retConsole.prompt(message, currentValue)
         config[key] = input.ifEmpty { currentValue.orEmpty() }
     }
-
 }
