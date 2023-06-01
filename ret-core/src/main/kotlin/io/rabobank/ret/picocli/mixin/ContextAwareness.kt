@@ -5,8 +5,6 @@ import picocli.CommandLine.Command
 import picocli.CommandLine.Option
 
 /**
- * Ignore Context Awareness
- *
  * Command to be mixed in (@Mixin) with other commands that use some type of contaext awareness for autocompletion (e.g. via [io.rabobank.ret.RetContext]).
  * Mixing in this command will automatically add a flag for ignoring the context, which can be read out and used when performing custom autocompletion logic.
  */
