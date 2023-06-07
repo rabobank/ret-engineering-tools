@@ -307,4 +307,4 @@ ret plugin initialize /path/to/.ret/plugins/my-plugin.(dll|so|dylib)
 Your plugin should now be available in RET, so try it out by calling `ret my-plugin my-sub-command`!
 
 If you have [enabled autocompletion](#setup-autocomplete), ret should now automatically pick up your new commands in there,
-and your descriptions will be shown as help texts. It is possible that you need to restart your terminal for this to work.
+and your descriptions will be shown as help texts. It is possible that you need to restart your terminal for this to work..
