@@ -11,21 +11,17 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import picocli.CommandLine.Model.CommandSpec
 import java.nio.file.Path
-import java.util.*
+import java.util.Properties
 
 internal class ConfigureCommandTest {
 
     private lateinit var command: ConfigureCommand
 
-    private lateinit var config: Config
-    private lateinit var retConsole: RetConsole
-    private lateinit var zshAutocompletionGenerator: ZshAutocompletionGenerator
+    private val retConsole = mockk<RetConsole>(relaxed = true)
+    private val zshAutocompletionGenerator = mockk<ZshAutocompletionGenerator>()
 
     @BeforeEach
     fun before() {
-        config = TestConfig()
-        retConsole = mockk(relaxed = true)
-        zshAutocompletionGenerator = mockk()
         command = ConfigureCommand(retConsole, zshAutocompletionGenerator, emptyList())
         command.commandSpec = CommandSpec.create()
     }
@@ -37,9 +33,9 @@ internal class ConfigureCommandTest {
         verify {
             retConsole.out(
                 """
-            To install RET autocompletion, run the following command
-                echo 'source <(ret configure autocomplete-zsh)' >>~/.zshrc && source ~/.zshrc
-            """.trimIndent()
+                To install RET autocompletion, run the following command
+                    echo 'source <(ret configure autocomplete-zsh)' >>~/.zshrc && source ~/.zshrc
+                """.trimIndent(),
             )
         }
     }
@@ -60,7 +56,7 @@ internal class ConfigureCommandTest {
     class TestConfig : Config {
         private val configProps = listOf(
             ConfigurationProperty("project", "Enter your Rabobank project"),
-            ConfigurationProperty("organisation", "Enter your Rabobank organisation")
+            ConfigurationProperty("organisation", "Enter your Rabobank organisation"),
         )
         private val properties = Properties()
 

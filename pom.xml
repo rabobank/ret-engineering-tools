@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.rabobank</groupId>
@@ -42,28 +43,31 @@
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.version>1.8.21</kotlin.version>
         <maven.compiler.release>17</maven.compiler.release>
-        <dokka-maven-plugin.version>1.8.10</dokka-maven-plugin.version>
-        <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
-        <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
-        <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
-        <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
+
         <compiler-plugin.version>3.11.0</compiler-plugin.version>
-        <quarkus.platform.version>3.1.0.Final</quarkus.platform.version>
+        <dokka-maven-plugin.version>1.8.10</dokka-maven-plugin.version>
         <git-commit-id.version>6.0.0</git-commit-id.version>
-        <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
-        <surefire-plugin.version>3.1.0</surefire-plugin.version>
-        <failsafe-plugin.version>3.1.0</failsafe-plugin.version>
         <jandex-maven-plugin.version>1.2.3</jandex-maven-plugin.version>
         <jreleaser-maven-plugin.version>1.6.0</jreleaser-maven-plugin.version>
+        <ktlint-maven-plugin.version>1.16.0</ktlint-maven-plugin.version>
+        <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
+        <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
+        <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
+        <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
+        <quarkus.platform.version>3.1.0.Final</quarkus.platform.version>
+        <surefire-plugin.version>3.1.0</surefire-plugin.version>
+        <versions-maven-plugin.version>2.16.0</versions-maven-plugin.version>
 
         <assertj-core.version>3.24.2</assertj-core.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
+        <detekt.version>1.22.0</detekt.version>
+        <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
+        <maven-surefire-junit5-tree-reporter.version>1.2.1</maven-surefire-junit5-tree-reporter.version>
         <mockito-kotlin.version>5.0.0</mockito-kotlin.version>
         <quarkus-jgit.version>3.0.0</quarkus-jgit.version>
         <quarkus-junit5-mockk.version>2.0.0</quarkus-junit5-mockk.version>
         <sshd-core.version>2.10.0</sshd-core.version>
         <testcontainers.version>1.18.3</testcontainers.version>
-        <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -89,6 +93,13 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>me.fabriciorby</groupId>
+                <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
+                <version>${maven-surefire-junit5-tree-reporter.version}</version>
+                <type>pom</type>
             </dependency>
 
             <dependency>
@@ -139,25 +150,30 @@
                     <version>${maven-release-plugin.version}</version>
                 </plugin>
                 <plugin>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>${failsafe-plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>integration-test</goal>
-                                <goal>verify</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${surefire-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>me.fabriciorby</groupId>
+                            <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
+                            <version>${maven-surefire-junit5-tree-reporter.version}</version>
+                        </dependency>
+                    </dependencies>
                     <configuration>
                         <systemPropertyVariables>
                             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                            <!--suppress UnresolvedMavenProperty -->
                             <maven.home>${maven.home}</maven.home>
                         </systemPropertyVariables>
+                        <reportFormat>plain</reportFormat>
+                        <consoleOutputReporter>
+                            <disable>true</disable>
+                        </consoleOutputReporter>
+                        <statelessTestsetInfoReporter
+                            implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+                            <theme>UNICODE</theme>
+                        </statelessTestsetInfoReporter>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -176,13 +192,35 @@
                     </executions>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${compiler-plugin.version}</version>
-                    <configuration>
-                        <compilerArgs>
-                            <arg>-parameters</arg>
-                        </compilerArgs>
-                    </configuration>
+                    <executions>
+                        <!-- Replacing default-compile as it is treated specially by Maven -->
+                        <execution>
+                            <id>default-compile</id>
+                            <phase>none</phase>
+                        </execution>
+                        <!-- Replacing default-testCompile as it is treated specially by Maven -->
+                        <execution>
+                            <id>default-testCompile</id>
+                            <phase>none</phase>
+                        </execution>
+                        <execution>
+                            <id>java-compile</id>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>java-test-compile</id>
+                            <phase>test-compile</phase>
+                            <goals>
+                                <goal>testCompile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.jetbrains.kotlin</groupId>
@@ -262,13 +300,19 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>${maven-javadoc-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
                     <version>${maven-source-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                            <configuration>
+                                <attach>true</attach>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
 
                 <plugin>
@@ -302,11 +346,15 @@
                                     <type>BINARY</type>
                                     <artifacts>
                                         <artifact>
-                                            <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.zip</path>
+                                            <path>
+                                                {{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.zip
+                                            </path>
                                             <platform>linux-x86_64</platform>
                                         </artifact>
                                         <artifact>
-                                            <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-osx-x86_64.zip</path>
+                                            <path>
+                                                {{artifactsDir}}/{{distributionName}}-{{projectVersion}}-osx-x86_64.zip
+                                            </path>
                                             <platform>osx-x86_64</platform>
                                         </artifact>
                                     </artifacts>
@@ -322,7 +370,8 @@
                                         <maven-central>
                                             <active>ALWAYS</active>
                                             <url>https://s01.oss.sonatype.org/service/local</url>
-                                            <snapshotUrl>https://s01.oss.sonatype.org/content/repositories/snapshots/</snapshotUrl>
+                                            <snapshotUrl>https://s01.oss.sonatype.org/content/repositories/snapshots/
+                                            </snapshotUrl>
                                             <closeRepository>true</closeRepository>
                                             <releaseRepository>true</releaseRepository>
                                             <stagingRepositories>artifacts-plugin</stagingRepositories>
@@ -340,6 +389,7 @@
                     </configuration>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>${maven-assembly-plugin.version}</version>
                 </plugin>
@@ -359,7 +409,14 @@
                     <version>${dokka-maven-plugin.version}</version>
                     <executions>
                         <execution>
+                            <id>javadoc-jar</id>
                             <phase>package</phase>
+                            <goals>
+                                <goal>javadocJar</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <phase>pre-site</phase>
                             <goals>
                                 <goal>dokka</goal>
                             </goals>
@@ -367,6 +424,62 @@
                     </executions>
                     <configuration>
                         <outputDir>${project.basedir}/target/apidocs</outputDir>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.gantsign.maven</groupId>
+                    <artifactId>ktlint-maven-plugin</artifactId>
+                    <version>${ktlint-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>format-and-check</id>
+                            <goals>
+                                <goal>format</goal>
+                                <goal>check</goal>
+                            </goals>
+                            <phase>generate-sources</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.ozsie</groupId>
+                    <artifactId>detekt-maven-plugin</artifactId>
+                    <version>${detekt.version}</version>
+                    <configuration>
+                        <config>detekt-rules.yml</config>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                            <phase>generate-sources</phase>
+                            <configuration>
+                                <autoCorrect>true</autoCorrect>
+                            </configuration>
+                        </execution>
+                    </executions>
+                    <dependencies>
+                        <dependency>
+                            <groupId>io.gitlab.arturbosch.detekt</groupId>
+                            <artifactId>detekt-formatting</artifactId>
+                            <version>${detekt.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>io.gitlab.arturbosch.detekt</groupId>
+                            <artifactId>detekt-rules-libraries</artifactId>
+                            <version>${detekt.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>versions-maven-plugin</artifactId>
+                    <version>${versions-maven-plugin.version}</version>
+                    <inherited>false</inherited>
+                    <configuration>
+                        <!--suppress MavenModelInspection -->
+                        <rulesUri>file:///${session.executionRootDirectory}/dependency-update-rules.xml</rulesUri>
                     </configuration>
                 </plugin>
             </plugins>
@@ -383,34 +496,12 @@
                 <defaultGoal>deploy</defaultGoal>
                 <plugins>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                                <configuration>
-                                    <attach>true</attach>
-                                </configuration>
-                            </execution>
-                        </executions>
+                        <groupId>org.jetbrains.dokka</groupId>
+                        <artifactId>dokka-maven-plugin</artifactId>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                                <configuration>
-                                    <attach>true</attach>
-                                </configuration>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>

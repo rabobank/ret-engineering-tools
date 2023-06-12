@@ -8,12 +8,10 @@ class PluginConfiguration {
 
     companion object {
         @JvmField
-        var RET_CONTEXT_INSTANCE: RetContext = RetContext()
+        var RET_CONTEXT_INSTANCE = RetContext()
     }
 
+    @Suppress("unused")
     @Produces
-    private fun retContext(): RetContext {
-        this.javaClass.typeName
-        return RET_CONTEXT_INSTANCE
-    }
+    private fun retContext(): RetContext = RET_CONTEXT_INSTANCE
 }

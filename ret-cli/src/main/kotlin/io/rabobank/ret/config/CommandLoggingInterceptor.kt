@@ -1,11 +1,11 @@
 package io.rabobank.ret.config
 
 import io.quarkus.logging.Log
-import java.lang.annotation.Inherited
 import jakarta.interceptor.AroundInvoke
 import jakarta.interceptor.Interceptor
 import jakarta.interceptor.InterceptorBinding
 import jakarta.interceptor.InvocationContext
+import java.lang.annotation.Inherited
 
 @InterceptorBinding
 @Retention(AnnotationRetention.RUNTIME)
@@ -17,8 +17,7 @@ annotation class Logged
 @Logged
 class CommandLoggingInterceptor {
 
-    @AroundInvoke()
-    @Throws(Exception::class)
+    @AroundInvoke
     fun intercept(context: InvocationContext): Any? {
         val targetClass = context.method.declaringClass.name
         val targetMethod = context.method.name

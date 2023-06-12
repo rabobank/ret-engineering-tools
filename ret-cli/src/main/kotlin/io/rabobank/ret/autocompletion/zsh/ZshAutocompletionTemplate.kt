@@ -1,9 +1,9 @@
 package io.rabobank.ret.autocompletion.zsh
 
+import jakarta.enterprise.context.ApplicationScoped
 import picocli.CommandLine
 import picocli.CommandLine.Model.OptionSpec
 import picocli.CommandLine.Model.PositionalParamSpec
-import jakarta.enterprise.context.ApplicationScoped
 
 private const val TAB = "    "
 private const val AUTOCOMPLETION_FUNCTION_PREFIX = "function:"
@@ -19,7 +19,7 @@ class ZshAutocompletionTemplate {
         subcommands: List<CommandLine>,
         positionalParameters: List<PositionalParamSpec>,
         options: List<OptionSpec>,
-        isRootFunction: Boolean
+        isRootFunction: Boolean,
     ): String {
         val commandOrParameterSpecActionPairs = when {
             subcommands.isNotEmpty() -> generateSubcommandSpecActionPairs(subcommands, functionName)
@@ -33,7 +33,7 @@ class ZshAutocompletionTemplate {
         val actions = allSpecActionPairs.mapNotNull { it.action }
 
         return """
-function ${functionName}() {
+function $functionName() {
     local context state state_descr line
     local curcontext="${'$'}curcontext"
     typeset -A opt_args
@@ -49,7 +49,10 @@ function ${functionName}() {
             """.trim()
     }
 
-    private fun generateSubcommandSpecActionPairs(subcommands: List<CommandLine>, parentFunctionName: String): List<ArgumentSpecActionPair> {
+    private fun generateSubcommandSpecActionPairs(
+        subcommands: List<CommandLine>,
+        parentFunctionName: String,
+    ): List<ArgumentSpecActionPair> {
         val overviewValues = subcommands.joinToString(" ") {
             val description = it.commandSpec.usageMessage().description().firstOrNull() ?: ""
             "'${it.commandName}[$description]'"
@@ -58,12 +61,13 @@ function ${functionName}() {
         val overviewTitle = parentFunctionName.replace("_", " ")
         val subcommandOverview = ArgumentSpecActionPair(
             "\"1:$overviewTitle subcommands:->subcommands_overview\"",
-            "subcommands_overview) _values \"autocompletion candidates\" $overviewValues;;"
+            "subcommands_overview) _values \"autocompletion candidates\" $overviewValues;;",
         )
 
         val subcommandActions = ArgumentSpecActionPair(
             "\"*::arg:->call_subcommand\"",
-            "call_subcommand) function=\"${parentFunctionName}_${'$'}{line[1]}\"; _call_function_if_exists \"${'$'}function\";;"
+            "call_subcommand) function=\"${parentFunctionName}_${'$'}{line[1]}\"; " +
+                "_call_function_if_exists \"${'$'}function\";;",
         )
 
         return listOf(subcommandOverview, subcommandActions)
@@ -72,9 +76,9 @@ function ${functionName}() {
     private fun generateOptionSpecActionPairs(options: List<OptionSpec>) =
         options.withIndex().map {
             val orderedOptionNames = it.value.names().sortedBy { name -> name.length }
-            val namesDefinition = if (orderedOptionNames.size == 1)
+            val namesDefinition = if (orderedOptionNames.size == 1) {
                 it.value.names()[0]
-            else {
+            } else {
                 val optionNamesSpaceSeparated = orderedOptionNames.joinToString(" ")
                 val optionNamesCommaSeparated = orderedOptionNames.joinToString(",")
                 "($optionNamesSpaceSeparated)'{$optionNamesCommaSeparated}'"
@@ -82,12 +86,14 @@ function ${functionName}() {
 
             val description = it.value.description().joinToString("")
             val isFlagOption = it.value.type() == java.lang.Boolean.TYPE || it.value.type() == Boolean::class.java
-            if (isFlagOption)
+            if (isFlagOption) {
                 ArgumentSpecActionPair("'$namesDefinition[$description]'")
-            else {
+            } else {
                 when (val action = generateAutocompleteAction(it.value.completionCandidates())) {
                     is NoAction -> ArgumentSpecActionPair("'$namesDefinition=[$description]:option:->'")
-                    is StaticValuesAction -> ArgumentSpecActionPair("'$namesDefinition=[$description]:option:(${action.staticValues})'")
+                    is StaticValuesAction ->
+                        ArgumentSpecActionPair("'$namesDefinition=[$description]:option:(${action.staticValues})'")
+
                     is FunctionCallAction -> {
                         val specValue = "'$namesDefinition=[$description]:option:->option${it.index}'"
                         val actionValue = "option${it.index}) ${action.functionName};;"
@@ -103,15 +109,19 @@ function ${functionName}() {
             val index = it.index + 1
 
             when (val action = generateAutocompleteAction(it.value.completionCandidates())) {
-                is NoAction -> {
-                    if (it.value.required())
+                is NoAction ->
+                    if (it.value.required()) {
                         ArgumentSpecActionPair("\"$index:$description: \"")
-                    else null // positional parameter(s) do not have autocompletion candidates and is optional, so it's not needed to generate candidates
-                }
+                    } else {
+                        // positional parameter(s) do not have autocompletion candidates and is optional,
+                        // so it's not needed to generate candidates
+                        null
+                    }
 
                 is StaticValuesAction -> {
                     val argumentsEntry = "\"$index:$description:->parameter${it.index}\""
-                    val caseEntry = "parameter${it.index}) _values \"autocompletion candidates\" ${action.staticValues};;"
+                    val caseEntry =
+                        "parameter${it.index}) _values \"autocompletion candidates\" ${action.staticValues};;"
                     ArgumentSpecActionPair(argumentsEntry, caseEntry)
                 }
 

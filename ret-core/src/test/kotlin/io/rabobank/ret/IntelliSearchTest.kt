@@ -11,8 +11,8 @@ internal class IntelliSearchTest {
 
     companion object {
         @JvmStatic
-        fun arguments(): List<Arguments> {
-            return listOf(
+        fun arguments(): List<Arguments> =
+            listOf(
                 Arguments.of("upa", "user profile aggregator", true),
                 Arguments.of("upa", "user-profile-aggregator", true),
                 Arguments.of("uuuupa", "user-profile-aggregator", false),
@@ -33,9 +33,8 @@ internal class IntelliSearchTest {
                 Arguments.of("uepa", "user profile aggregator", false),
                 Arguments.of("upat", " user pa test upa", true),
                 Arguments.of("upatupat", "user pa test upa user pa test upa", true),
-                Arguments.of("upat", "test upa", false)
+                Arguments.of("upat", "test upa", false),
             )
-        }
     }
 
     private val target = IntelliSearch()

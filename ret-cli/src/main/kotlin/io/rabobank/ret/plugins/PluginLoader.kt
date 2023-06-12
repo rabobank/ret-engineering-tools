@@ -22,18 +22,13 @@ class PluginLoader(
     private val environment: Environment,
 ) {
 
-    fun getPluginCommands(commandLine: CommandLine): List<PluginCommandEntry> {
-        return plugins.flatMap { plugin ->
+    fun getPluginCommands(commandLine: CommandLine): List<PluginCommandEntry> =
+        plugins.flatMap { plugin ->
             plugin.pluginDefinition.commands.map {
                 val spec = createCommandSpec(it, it.name, commandLine, plugin)
-
-                PluginCommandEntry(
-                    it.name,
-                    spec,
-                )
+                PluginCommandEntry(it.name, spec)
             }
-        }.toList()
-    }
+        }
 
     private fun createCommandSpec(
         command: PluginCommand,
@@ -55,13 +50,20 @@ class PluginLoader(
 
         command.arguments.forEach {
             commandSpec.addPositional(
-                PositionalParamSpec.builder().paramLabel(it.name).index(it.position).arity(it.arity).completionCandidates(it.completionCandidates).build(),
+                PositionalParamSpec.builder()
+                    .paramLabel(it.name)
+                    .index(it.position)
+                    .arity(it.arity)
+                    .completionCandidates(it.completionCandidates)
+                    .build(),
             )
         }
 
         command.options.forEach {
             commandSpec.addOption(
-                OptionSpec.builder(it.names.toTypedArray()).type(Class.forName(it.type)).completionCandidates(it.completionCandidates)
+                OptionSpec.builder(it.names.toTypedArray())
+                    .type(Class.forName(it.type))
+                    .completionCandidates(it.completionCandidates)
                     .build(),
             )
         }
@@ -73,12 +75,11 @@ class PluginLoader(
         return commandSpec
     }
 
-    private fun createRetContext(parseResult: ParseResult, topCommand: String): RetContext {
-        return RetContext(
+    private fun createRetContext(parseResult: ParseResult, topCommand: String): RetContext =
+        RetContext(
             parseResult.originalArgs().filter { it != topCommand },
             environment.name,
             executionContext.repositoryName(),
             executionContext.branchName(),
         )
-    }
 }

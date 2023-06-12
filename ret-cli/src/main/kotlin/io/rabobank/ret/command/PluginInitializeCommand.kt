@@ -12,7 +12,7 @@ class PluginInitializeCommand : Runnable {
     @Parameters(
         arity = "1",
         paramLabel = "<plugin file>",
-        description = ["Absolute path to plugin"]
+        description = ["Absolute path to plugin"],
     )
     lateinit var pluginFile: String
 

@@ -36,6 +36,7 @@ class IntelliSearch {
     companion object {
         val BREAK_CHARACTER_REGEX = "[\\s_-]+".toRegex()
         val UPPERCASE_REGEX = "(?=\\p{Upper})".toRegex()
+        private const val maxLoopRounds = 1000
     }
 
     /**
@@ -50,21 +51,31 @@ class IntelliSearch {
         }
 
         val candidateParts = splitCandidateInParts(candidate)
+        val filterRound = filterRound(FilterRound(filter, 0, filter.length - 1), candidateParts, mutableListOf())
 
-        var filterRound = FilterRound(filter, 0, filter.length - 1)
+        return filterRound.hasSucceeded()
+    }
+
+    // kotlin:S3776 = rule about Cyclomatic Complexity
+    @Suppress("CyclomaticComplexMethod", "LoopWithTooManyJumpStatements", "kotlin:S3776")
+    private fun filterRound(
+        startFilterRound: FilterRound,
+        candidateParts: List<String>,
+        bannedSearches: MutableList<SearchHit>,
+    ): FilterRound {
+        var filterRound = startFilterRound
         var loopRounds = 0
-
         var lastSearchHit: SearchHit? = null
-        val bannedSearches = mutableListOf<SearchHit>()
 
-        filterPartLoop@ while (!filterRound.hasSucceeded() && loopRounds++ < 1000) {
+        filterPartLoop@ while (!filterRound.hasSucceeded() && loopRounds++ < maxLoopRounds) {
             val filterPart = filterRound.value
             Log.trace("Searching filterPart $filterRound")
 
             for ((candidateIndex, candidatePart) in candidateParts.withIndex()) {
                 val possibleSearchHit = SearchHit(filterRound, candidateIndex)
 
-                if (candidateIndex <= (lastSearchHit?.candidateIndex ?: -1)) {
+                val index = lastSearchHit?.candidateIndex ?: -1
+                if (candidateIndex <= index) {
                     continue
                 }
 
@@ -100,8 +111,7 @@ class IntelliSearch {
 
             filterRound = filterRound.retryWithSmallerPart()
         }
-
-        return filterRound.hasSucceeded()
+        return filterRound
     }
 
     private fun splitCandidateInParts(candidate: String): List<String> {

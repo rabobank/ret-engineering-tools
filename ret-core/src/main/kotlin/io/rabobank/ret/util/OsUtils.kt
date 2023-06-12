@@ -20,7 +20,7 @@ class OsUtils {
         when {
             IS_OS_WINDOWS -> throw NotImplementedError("Windows is not supported yet.")
             IS_OS_LINUX || IS_OS_MAC -> System.getenv("HOME")
-            else -> throw IllegalStateException("Unsupported operating system")
+            else -> error("Unsupported operating system")
         }
 
     /**

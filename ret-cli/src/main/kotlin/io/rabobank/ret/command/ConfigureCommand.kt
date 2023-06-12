@@ -11,7 +11,7 @@ import picocli.CommandLine.Spec
 
 @Command(
     name = "configure",
-    description = ["Initialize or update RET configuration file"]
+    description = ["Initialize or update RET configuration file"],
 )
 @Logged
 class ConfigureCommand(
@@ -23,11 +23,15 @@ class ConfigureCommand(
     @Spec
     lateinit var commandSpec: Model.CommandSpec
 
-    @Command(name = "autocomplete", description = ["Prints the command to install autocomplete. Supported shells are: zsh"])
+    @Command(
+        name = "autocomplete",
+        description = ["Prints the command to install autocomplete. Supported shells are: zsh"],
+    )
     fun printInstallAutocompleteCommand(@Parameters(description = ["shells"]) shell: String) {
-        when (shell.lowercase()) {
-            "zsh" -> printConfigureZsh()
-            else -> retConsole.out("Autocompletion for shell $shell not supported.")
+        if (shell.lowercase() == "zsh") {
+            printConfigureZsh()
+        } else {
+            retConsole.out("Autocompletion for shell $shell not supported.")
         }
     }
 
@@ -49,7 +53,7 @@ class ConfigureCommand(
             """
             To install RET autocompletion, run the following command
                 echo 'source <(ret configure autocomplete-zsh)' >>~/.zshrc && source ~/.zshrc
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 }
