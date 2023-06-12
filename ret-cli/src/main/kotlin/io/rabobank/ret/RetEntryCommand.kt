@@ -13,13 +13,13 @@ import picocli.CommandLine
     subcommands = [
         PluginCommand::class,
         ConfigureCommand::class,
-    ]
+    ],
 )
 class RetEntryCommand {
     @CommandLine.Option(
         names = ["-v", "--version"],
         versionHelp = true,
-        description = ["print version information"]
+        description = ["print version information"],
     )
     var versionRequested = false
 

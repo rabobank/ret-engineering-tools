@@ -54,14 +54,17 @@ class IntrospectionUtilTest {
     }
 
     @Command(name = "test", description = ["description"])
-    class TestCommand() {
+    class TestCommand {
 
+        @Suppress("unused")
         @Command(name = "subcommand")
         fun subcommand(@Parameters(arity = "1", index = "0..*", paramLabel = "<input>") input: String) {
+            // No-op
         }
 
         @Command(name = "hiddencommand", hidden = true)
         fun hiddencommand() {
+            // No-op
         }
     }
 }

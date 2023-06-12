@@ -14,25 +14,24 @@ import org.junit.jupiter.api.io.TempDir
 import picocli.CommandLine
 import java.nio.file.Files
 import java.nio.file.Path
-import java.util.*
+import java.util.Properties
 import kotlin.io.path.pathString
 
 class PluginInitializeCommandTest {
     private lateinit var command: PluginInitializeCommand
-    private lateinit var config: Config
-    private lateinit var retConsole: RetConsole
-    private lateinit var osUtils: OsUtils
+    private val config: Config = TestConfig()
+    private val retConsole = mockk<RetConsole>(relaxed = true)
+    private val osUtils by lazy {
+        mockk<OsUtils> {
+            every { getHomeDirectory() } returns mockUserHomeDirectory.pathString
+        }
+    }
 
     @TempDir
     lateinit var mockUserHomeDirectory: Path
 
     @BeforeEach
     fun before() {
-        config = TestConfig()
-        retConsole = mockk(relaxed = true)
-        osUtils = mockk {
-            every { getHomeDirectory() } returns mockUserHomeDirectory.pathString
-        }
         command = PluginInitializeCommand(jacksonObjectMapper(), config, retConsole, osUtils)
         command.commandSpec = CommandLine.Model.CommandSpec.create()
 
@@ -58,7 +57,6 @@ class PluginInitializeCommandTest {
         every { retConsole.prompt("Enter your Rabobank project:", null) } returns "myProject"
         every { retConsole.prompt("Enter your Rabobank organisation:", null) } returns "myOrganisation"
 
-
         command.run()
 
         assertThat(config["project"]).isEqualTo("myProject")
@@ -74,7 +72,7 @@ class PluginInitializeCommandTest {
         every {
             retConsole.prompt(
                 "Enter your Rabobank organisation:",
-                "oldOrganisation"
+                "oldOrganisation",
             )
         } returns "newOrganisation"
 
@@ -101,7 +99,7 @@ class PluginInitializeCommandTest {
     class TestConfig : Config {
         private val configProps = listOf(
             ConfigurationProperty("project", "Enter your Rabobank project"),
-            ConfigurationProperty("organisation", "Enter your Rabobank organisation")
+            ConfigurationProperty("organisation", "Enter your Rabobank organisation"),
         )
         private val properties = Properties()
 

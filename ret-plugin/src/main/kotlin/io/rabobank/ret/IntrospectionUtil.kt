@@ -23,10 +23,17 @@ object IntrospectionUtil {
         val commandName = commandSpec.name()
 
         val arguments = commandSpec.positionalParameters().map {
-            Argument(it.paramLabel(), it.index().toString(), it.completionCandidates()?.toList() ?: emptyList(), it.arity().toString())
+            Argument(
+                it.paramLabel(),
+                it.index().toString(),
+                it.completionCandidates()?.toList() ?: emptyList(),
+                it.arity().toString(),
+            )
         }
         val options = commandSpec.options()
-            .map { Option(it.names().toList(), it.type().canonicalName, it.completionCandidates()?.toList() ?: emptyList()) }
+            .map {
+                Option(it.names().toList(), it.type().canonicalName, it.completionCandidates()?.toList() ?: emptyList())
+            }
 
         val subcommands = commandSpec.subcommands().values
             .map {

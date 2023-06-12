@@ -6,7 +6,7 @@ import picocli.CommandLine.Command
     name = "plugin",
     description = ["Initialize or update RET plugins"],
     subcommands = [
-        PluginInitializeCommand::class
-    ]
+        PluginInitializeCommand::class,
+    ],
 )
 class PluginCommand

@@ -72,7 +72,5 @@ class PluginLoaderTest {
     }
 
     @Command
-    class EmptyCommand() {
-
-    }
+    class EmptyCommand
 }

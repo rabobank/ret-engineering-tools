@@ -1,8 +1,8 @@
 package io.rabobank.ret.autocompletion.zsh
 
+import jakarta.enterprise.context.ApplicationScoped
 import picocli.CommandLine
 import picocli.CommandLine.Model.CommandSpec
-import jakarta.enterprise.context.ApplicationScoped
 
 private const val SHEBANG = "#!/bin/zsh"
 
@@ -32,7 +32,11 @@ class ZshAutocompletionGenerator(private val template: ZshAutocompletionTemplate
      * This function generates a ZSH function for a command and calls this function recursively for all of its subcommands.
      * @return A list containing all generated functions, ordered by hierarchy top-down.
      */
-    private fun generateFunctionForCommandsRecursively(commandLine: CommandLine, functionPrefix: String, isRootFunction: Boolean): List<String> {
+    private fun generateFunctionForCommandsRecursively(
+        commandLine: CommandLine,
+        functionPrefix: String,
+        isRootFunction: Boolean,
+    ): List<String> {
         val functionName = "${functionPrefix}_${commandLine.commandName}"
 
         val subcommands = commandLine.subcommands.values
@@ -49,9 +53,14 @@ class ZshAutocompletionGenerator(private val template: ZshAutocompletionTemplate
         val shouldGenerateFunction = (subcommands + positionalParameters + options).isNotEmpty()
 
         return if (shouldGenerateFunction) {
-            val function = template.applyForCommand(functionName, subcommands, positionalParameters, options, isRootFunction)
-            val subcommandFunctions = subcommands.flatMap { generateFunctionForCommandsRecursively(it, functionName, false) }
+            val function =
+                template.applyForCommand(functionName, subcommands, positionalParameters, options, isRootFunction)
+            val subcommandFunctions = subcommands.flatMap {
+                generateFunctionForCommandsRecursively(it, functionName, false)
+            }
             listOf(function) + subcommandFunctions
-        } else listOf()
+        } else {
+            listOf()
+        }
     }
 }

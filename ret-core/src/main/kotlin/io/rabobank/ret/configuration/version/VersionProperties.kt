@@ -32,7 +32,8 @@ class VersionProperties {
      * Get the version number of this ret release.
      * @return the current installed version number.
      */
-    fun getAppVersion(): String = config.getOptionalValue("quarkus.application.version", String::class.java).orElse("unknown")
+    fun getAppVersion(): String =
+        config.getOptionalValue("quarkus.application.version", String::class.java).orElse("unknown")
 
     /**
      * Get info about the current operating system.
