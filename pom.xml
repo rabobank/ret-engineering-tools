@@ -41,7 +41,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
-        <kotlin.version>1.8.21</kotlin.version>
+        <kotlin.version>1.8.22</kotlin.version>
         <maven.compiler.release>17</maven.compiler.release>
 
         <compiler-plugin.version>3.11.0</compiler-plugin.version>
