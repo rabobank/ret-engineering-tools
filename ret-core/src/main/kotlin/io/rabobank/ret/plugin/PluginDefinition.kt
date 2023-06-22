@@ -12,6 +12,7 @@ data class Plugin(
 @RegisterForReflection
 data class PluginDefinition(
     val libName: String,
+    val version: String = "unknown",
     val commands: List<PluginCommand>,
     val customZshAutocompletion: String?,
 )
