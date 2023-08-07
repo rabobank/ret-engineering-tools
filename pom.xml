@@ -53,7 +53,7 @@
         <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
-        <quarkus.platform.version>3.2.2.Final</quarkus.platform.version>
+        <quarkus.platform.version>3.2.3.Final</quarkus.platform.version>
         <surefire-plugin.version>3.1.2</surefire-plugin.version>
         <versions-maven-plugin.version>2.16.0</versions-maven-plugin.version>
 
