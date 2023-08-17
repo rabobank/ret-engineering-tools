@@ -62,7 +62,7 @@ class PluginLoader(
         command.options.forEach {
             commandSpec.addOption(
                 OptionSpec.builder(it.names.toTypedArray())
-                    .type(Class.forName(it.type))
+                    .type(asType(it.type))
                     .completionCandidates(it.completionCandidates)
                     .build(),
             )
@@ -82,4 +82,33 @@ class PluginLoader(
             executionContext.repositoryName(),
             executionContext.branchName(),
         )
+
+    private companion object {
+        /**
+         * Return the java [java.lang.Class] object with the specified class name.
+         *
+         * This is an "extended" [java.lang.Class.forName] operation.
+         *
+         * + It is able to return Class objects for primitive types
+         * + Classes in name space `java.lang` do not need the fully qualified name
+         * + It does not throw a checked Exception
+         *
+         * @param className The class name, never `null`
+         *
+         * @throws IllegalArgumentException if no class can be loaded
+         */
+        private fun asType(className: String): Class<*>? =
+            when (className) {
+                "boolean" -> Boolean::class.javaPrimitiveType
+                "byte" -> Byte::class.javaPrimitiveType
+                "short" -> Short::class.javaPrimitiveType
+                "int" -> Int::class.javaPrimitiveType
+                "long" -> Long::class.javaPrimitiveType
+                "float" -> Float::class.javaPrimitiveType
+                "double" -> Double::class.javaPrimitiveType
+                "char" -> Char::class.javaPrimitiveType
+                "void" -> Void.TYPE
+                else -> Class.forName(if (className.contains(".")) className else "java.lang.$className")
+            }
+    }
 }
