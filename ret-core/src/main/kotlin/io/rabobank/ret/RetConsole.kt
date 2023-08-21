@@ -36,7 +36,7 @@ class RetConsole(parseResult: ParseResult) {
      */
     fun prompt(message: String, currentValue: String?): String {
         val messageWithDefault = if (currentValue.isNullOrEmpty()) message else "$message [$currentValue]"
-        out(messageWithDefault)
+        out("$messageWithDefault:")
         return readln()
     }
 }
