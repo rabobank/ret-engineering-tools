@@ -1,94 +1,104 @@
 package io.rabobank.ret.commands
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.quarkus.logging.Log
+import com.fasterxml.jackson.module.kotlin.readValue
+import io.rabobank.ret.IntrospectionUtil
 import io.rabobank.ret.RetConsole
-import io.rabobank.ret.util.IntrospectionUtil
-import io.rabobank.ret.util.Logged
+import io.rabobank.ret.configuration.Answer
+import io.rabobank.ret.configuration.Config
 import io.rabobank.ret.util.OsUtils
 import picocli.CommandLine.Command
 import picocli.CommandLine.Model.CommandSpec
 import picocli.CommandLine.Parameters
 import picocli.CommandLine.Spec
 import java.io.File
-import java.io.FileNotFoundException
-import kotlin.io.path.createDirectories
+import java.io.FileWriter
+import java.nio.file.Path
 
 /**
  * Plugin Initialize Command
  *
- * This is a mandatory sub command for any RET plugin that you create.
- * RET will use it when executing `ret plugin initialize your-plugin`.
- *
- * With this, RET will be able to run the plugin commands and automatically add autocompletion for the plugin.
+ * This is a mandatory sub command for any RET plugin that you create. RET will use it when executing `ret plugin initialize your-plugin`.
+ * With this, RET will be able to run the plugin commands, automatically add autocompletion for the plugin, and prompt the user for any property that needs to be configured.
  */
 @Command(
     name = "initialize",
     hidden = true,
 )
-@Logged
 class PluginInitializeCommand(
-    private val retConsole: RetConsole,
     private val objectMapper: ObjectMapper,
-    private val osUtils: OsUtils,
+    private val config: Config,
+    private val retConsole: RetConsole,
+    osUtils: OsUtils,
 ) : Runnable {
     @Spec
     lateinit var commandSpec: CommandSpec
 
     @Parameters(
-        arity = "0..1",
-        paramLabel = "<path to plugin>",
+        arity = "1",
+        paramLabel = "<plugin name>",
     )
-    lateinit var pluginPath: String
+    lateinit var pluginName: String
 
-    private val pluginDirectory = osUtils.getRetPluginsDirectory()
+    private val pluginDirectory = Path.of(osUtils.getHomeDirectory(), ".ret", "plugins")
 
     override fun run() {
-        Log.debug("Creating directories")
-        pluginDirectory.createDirectories()
+        val plugin = File(pluginName)
+        createPluginInformationFile(plugin)
+        configurePlugin(plugin)
+    }
 
-        val parent = commandSpec.parent()
-        val pluginName = parent.name()
+    private fun createPluginInformationFile(plugin: File) {
+        val rootCommand = commandSpec.root()
+        val pluginDefinition = IntrospectionUtil.introspect(rootCommand, plugin.name)
 
-        retConsole.out("Initializing plugin '$pluginName'")
-        val pluginNameWithFallbackToParent = if (this::pluginPath.isInitialized) pluginPath else pluginName
-        val plugin = File(pluginNameWithFallbackToParent)
-        val pluginFile = pluginDirectory.resolve("$pluginName.${osUtils.getPluginFileExtension()}").toFile()
-
-        if (plugin.isAbsolute) {
-            if (pluginFile.exists() && plugin != pluginFile) {
-                val overwrite = retConsole.prompt("The plugin is already installed, overwrite [Yn]?", "Y")
-                if (overwrite.isBlank() || overwrite.lowercase() == "y") {
-                    plugin.copyTo(pluginFile, true)
-                    Log.info("Plugin file overwritten for '$pluginName'")
-                }
-            } else {
-                plugin.copyTo(pluginFile, true)
-                Log.info("Copied plugin file for '$pluginName'")
-            }
-        }
-
-        if (!pluginFile.exists()) {
-            throw FileNotFoundException("$pluginFile does not exist")
-        }
-
-        Log.info("Generating/updating plugin file for '$pluginName'")
-        createPluginInformationFile(pluginName)
-
-        if (parent.subcommands().containsKey("configure")) {
-            parent.commandLine().execute("configure")
-        } else {
-            retConsole.out(
-                "Since version 0.2 RET no longer initializes plugin specific configuration during 'initialize', " +
-                    "this is now moved to 'configure'. " +
-                    "Plugin '$pluginName' does not seem to have a subcommand 'configure' (PluginConfigureCommand).",
-            )
+        FileWriter(pluginDirectory.resolve("${plugin.nameWithoutExtension}.plugin").toFile(), false).use {
+            it.write(objectMapper.writeValueAsString(pluginDefinition))
         }
     }
 
-    private fun createPluginInformationFile(pluginName: String) {
-        val pluginDefinition = IntrospectionUtil.introspect(commandSpec.root(), pluginName)
-        objectMapper.writerWithDefaultPrettyPrinter()
-            .writeValue(pluginDirectory.resolve("$pluginName.plugin").toFile(), pluginDefinition)
+    private fun configurePlugin(plugin: File) {
+        val pluginName = plugin.nameWithoutExtension
+        retConsole.out("Hello! Let's start configuring the $pluginName plugin.")
+
+        config.configure { promptForOverride(it.prompt, it.key) }
+
+        storePluginAnswers(plugin)
+
+        retConsole.out("Done! Feel free to run this command again to make changes.")
+        retConsole.out("Wrote configuration to ${config.configFile()}")
+    }
+
+    private fun promptForOverride(message: String, key: String) {
+        val currentValue = config[key]
+        val input = retConsole.prompt(message, currentValue)
+        config[key] = input.ifEmpty { currentValue.orEmpty() }
+    }
+
+    private fun storePluginAnswers(plugin: File) {
+        var hasPluginSpecificConfig = false
+        val pluginConfigFile = pluginDirectory.resolve("${plugin.nameWithoutExtension}.json").toFile()
+        val pluginConfig = if (pluginConfigFile.exists()) objectMapper.readValue<Map<String, String>>(pluginConfigFile) else emptyMap()
+
+        val answers = config.prompt {
+            hasPluginSpecificConfig = true
+            val message = "${it.prompt}${if (it.required) " (required)" else ""}"
+            val currentValue = pluginConfig[it.key]
+            var input = retConsole.prompt(message, currentValue)
+
+            while (it.required && input.ifEmpty { currentValue.orEmpty() }.isEmpty()) {
+                retConsole.out("Please fill in an answer")
+                input = retConsole.prompt(message, currentValue)
+            }
+
+            Answer(it.key, input.ifEmpty { currentValue.orEmpty() })
+        }.associateBy { it.key }
+            .mapValues { it.value.answer }
+
+        if (hasPluginSpecificConfig) {
+            objectMapper.writeValue(pluginConfigFile, answers)
+
+            retConsole.out("Wrote configuration to $pluginConfigFile")
+        }
     }
 }
