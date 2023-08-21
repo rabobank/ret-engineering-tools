@@ -1,8 +1,10 @@
 package io.rabobank.ret.commands
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import io.rabobank.ret.IntrospectionUtil
 import io.rabobank.ret.RetConsole
+import io.rabobank.ret.configuration.Answer
 import io.rabobank.ret.configuration.Config
 import io.rabobank.ret.util.OsUtils
 import picocli.CommandLine.Command
@@ -43,18 +45,7 @@ class PluginInitializeCommand(
     override fun run() {
         val plugin = File(pluginName)
         createPluginInformationFile(plugin)
-        configurePlugin(plugin.nameWithoutExtension)
-    }
-
-    private fun configurePlugin(pluginName: String) {
-        retConsole.out("Hello! Let's start configuring the $pluginName plugin.")
-
-        config.configure {
-            promptForOverride("${it.prompt}:", it.key)
-        }
-
-        retConsole.out("Done! Feel free to run this command again to make changes.")
-        retConsole.out("Wrote configuration to ${config.configFile()}")
+        configurePlugin(plugin)
     }
 
     private fun createPluginInformationFile(plugin: File) {
@@ -66,9 +57,48 @@ class PluginInitializeCommand(
         }
     }
 
+    private fun configurePlugin(plugin: File) {
+        val pluginName = plugin.nameWithoutExtension
+        retConsole.out("Hello! Let's start configuring the $pluginName plugin.")
+
+        config.configure { promptForOverride(it.prompt, it.key) }
+
+        storePluginAnswers(plugin)
+
+        retConsole.out("Done! Feel free to run this command again to make changes.")
+        retConsole.out("Wrote configuration to ${config.configFile()}")
+    }
+
     private fun promptForOverride(message: String, key: String) {
         val currentValue = config[key]
         val input = retConsole.prompt(message, currentValue)
         config[key] = input.ifEmpty { currentValue.orEmpty() }
+    }
+
+    private fun storePluginAnswers(plugin: File) {
+        var hasPluginSpecificConfig = false
+        val pluginConfigFile = pluginDirectory.resolve("${plugin.nameWithoutExtension}.json").toFile()
+        val pluginConfig = if (pluginConfigFile.exists()) objectMapper.readValue<Map<String, String>>(pluginConfigFile) else emptyMap()
+
+        val answers = config.prompt {
+            hasPluginSpecificConfig = true
+            val message = "${it.prompt}${if (it.required) " (required)" else ""}"
+            val currentValue = pluginConfig[it.key]
+            var input = retConsole.prompt(message, currentValue)
+
+            while (it.required && input.ifEmpty { currentValue.orEmpty() }.isEmpty()) {
+                retConsole.out("Please fill in an answer")
+                input = retConsole.prompt(message, currentValue)
+            }
+
+            Answer(it.key, input.ifEmpty { currentValue.orEmpty() })
+        }.associateBy { it.key }
+            .mapValues { it.value.answer }
+
+        if (hasPluginSpecificConfig) {
+            objectMapper.writeValue(pluginConfigFile, answers)
+
+            retConsole.out("Wrote configuration to $pluginConfigFile")
+        }
     }
 }
