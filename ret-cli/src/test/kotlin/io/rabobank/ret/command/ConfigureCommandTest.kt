@@ -5,8 +5,10 @@ import io.mockk.mockk
 import io.mockk.verify
 import io.rabobank.ret.RetConsole
 import io.rabobank.ret.autocompletion.zsh.ZshAutocompletionGenerator
+import io.rabobank.ret.configuration.Answer
 import io.rabobank.ret.configuration.Config
 import io.rabobank.ret.configuration.ConfigurationProperty
+import io.rabobank.ret.configuration.Question
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import picocli.CommandLine.Model.CommandSpec
@@ -68,6 +70,10 @@ internal class ConfigureCommandTest {
 
         override fun configure(function: (ConfigurationProperty) -> Unit) {
             configProps.forEach(function)
+        }
+
+        override fun prompt(function: (Question) -> Answer): List<Answer> {
+            TODO("Not yet implemented")
         }
 
         override fun configFile(): Path = Path.of("test-configuration")

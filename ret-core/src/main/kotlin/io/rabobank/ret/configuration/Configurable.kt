@@ -6,5 +6,7 @@ package io.rabobank.ret.configuration
  * and inputs are saved in the RET configuration file.
  */
 interface Configurable {
-    fun properties(): List<ConfigurationProperty>
+    fun properties(): List<ConfigurationProperty> = emptyList()
+
+    fun prompts(): List<Question> = emptyList()
 }

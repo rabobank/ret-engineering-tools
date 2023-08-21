@@ -53,9 +53,12 @@ class RetConfig(
      * This is automatically called when initializing a plugin, so you normally do not call this yourself.
      */
     override fun configure(function: (ConfigurationProperty) -> Unit) {
-        configurables.flatMap { it.properties() }.forEach(function)
+        configurables.flatMap(Configurable::properties).forEach(function)
         save()
     }
+
+    override fun prompt(function: (Question) -> Answer): List<Answer> =
+        configurables.flatMap(Configurable::prompts).map(function)
 
     private fun save() {
         properties[RET_VERSION] = retVersion
