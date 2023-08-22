@@ -5,8 +5,6 @@ package io.rabobank.ret.configuration
  * Upon initializing the plugin, the user will be prompted for all provided configuration properties,
  * and inputs are saved in the RET configuration file.
  */
-interface Configurable {
-    fun properties(): List<ConfigurationProperty> = emptyList()
-
-    fun prompts(): List<Question> = emptyList()
+fun interface Configurable {
+    fun properties(): List<ConfigurationProperty>
 }
