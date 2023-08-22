@@ -1,6 +1,7 @@
 package io.rabobank.ret
 
 import io.rabobank.ret.plugin.Argument
+import io.rabobank.ret.util.IntrospectionUtil
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import picocli.CommandLine

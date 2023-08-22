@@ -171,7 +171,7 @@ class MySubCommandTest {
 ```
 
 #### Test Setup for Entry Command
-On top of what is written above, when you are testing the implementation of your entry command, you have to provide a custom picocli `IFacotry`, as the `PluginInitializeCommand` cannot be created automatically.
+On top of what is written above, when you are testing the implementation of your entry command, you have to provide a custom picocli `IFactory`, as the `PluginInitializeCommand` cannot be created automatically.
 To provide a simple mock, you can do the following:
 ```kotlin
 // ...
@@ -179,13 +179,11 @@ private val commandLine = CommandLine(MyPluginEntryCommand(), CustomInitializati
 // ...
 
 class CustomInitializationFactory : IFactory {
-    private val pluginInitializeCommand: PluginInitializeCommand = mock()
-    override fun <K : Any?> create(cls: Class<K>?): K {
-        return if (cls?.isInstance(pluginInitializeCommand) == true) {
-            cls.cast(pluginInitializeCommand)
-        } else {
-            CommandLine.defaultFactory().create(cls)
-        }
+  override fun <K : Any> create(cls: Class<K>): K =
+    if (cls.isAnnotationPresent(Command::class.java)) {
+      mock(cls)
+    } else {
+      CommandLine.defaultFactory().create(cls)
     }
 }
 ```

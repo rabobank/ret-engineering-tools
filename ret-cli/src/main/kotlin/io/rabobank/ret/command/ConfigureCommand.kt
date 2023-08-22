@@ -2,10 +2,10 @@ package io.rabobank.ret.command
 
 import io.rabobank.ret.RetConsole
 import io.rabobank.ret.autocompletion.zsh.ZshAutocompletionGenerator
-import io.rabobank.ret.config.Logged
 import io.rabobank.ret.plugin.Plugin
+import io.rabobank.ret.util.Logged
 import picocli.CommandLine.Command
-import picocli.CommandLine.Model
+import picocli.CommandLine.Model.CommandSpec
 import picocli.CommandLine.Parameters
 import picocli.CommandLine.Spec
 
@@ -19,9 +19,8 @@ class ConfigureCommand(
     private val zshAutocompletionGenerator: ZshAutocompletionGenerator,
     private val plugins: List<Plugin>,
 ) {
-
     @Spec
-    lateinit var commandSpec: Model.CommandSpec
+    lateinit var commandSpec: CommandSpec
 
     @Command(
         name = "autocomplete",
@@ -42,9 +41,7 @@ class ConfigureCommand(
         retConsole.out(autoCompleteScript)
 
         plugins.forEach { plugin ->
-            plugin.pluginDefinition.customZshAutocompletion?.let {
-                retConsole.out(it)
-            }
+            plugin.pluginDefinition.customZshAutocompletion?.let(retConsole::out)
         }
     }
 

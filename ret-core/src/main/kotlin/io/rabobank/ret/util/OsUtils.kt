@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped
 import org.apache.commons.lang3.SystemUtils.IS_OS_LINUX
 import org.apache.commons.lang3.SystemUtils.IS_OS_MAC
 import org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS
+import java.nio.file.Path
 
 /**
  * Utils for the Operating System
@@ -27,5 +28,17 @@ class OsUtils {
      * Get the path of the directory where RET files and configurations are stored (not configurable).
      * @return the RET directory.
      */
-    fun getRetHomeDirectory(): String = "${getHomeDirectory()}/.ret"
+    fun getRetHomeDirectory(): Path = Path.of(getHomeDirectory(), ".ret")
+
+    /**
+     * Get the path of the directory where RET plugins and their configurations are stored (not configurable).
+     * @return the RET plugins directory.
+     */
+    fun getRetPluginsDirectory(): Path = getRetHomeDirectory().resolve("plugins")
+
+    /**
+     * Get the path of where the plugin configuration is stored (not configurable).
+     * @return the RET plugin configuration path.
+     */
+    fun getPluginConfig(pluginName: String): Path = getRetPluginsDirectory().resolve("$pluginName.json")
 }

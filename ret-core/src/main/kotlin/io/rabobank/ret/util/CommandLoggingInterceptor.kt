@@ -1,4 +1,4 @@
-package io.rabobank.ret.config
+package io.rabobank.ret.util
 
 import io.quarkus.logging.Log
 import jakarta.interceptor.AroundInvoke
