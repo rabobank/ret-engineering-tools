@@ -5,7 +5,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import io.mockk.every
 import io.mockk.mockk
 import io.rabobank.ret.RetConsole
-import io.rabobank.ret.configuration.version.VersionProperties
 import org.apache.commons.io.FileUtils
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -40,7 +39,7 @@ class PluginConfigureCommandTest {
 
     @BeforeEach
     fun before() {
-        command = PluginConfigureCommand(config, retConsole, jacksonObjectMapper(), VersionProperties())
+        command = PluginConfigureCommand(config, retConsole, jacksonObjectMapper())
         command.commandSpec = CommandSpec.create()
             .parent(CommandSpec.create().name(pluginName))
     }
@@ -52,17 +51,16 @@ class PluginConfigureCommandTest {
 
     @Test
     fun newProperty() {
-        every { retConsole.prompt("Enter your project:", any()) } returns "myProject"
-        every { retConsole.prompt("Enter your organisation:", any()) } returns "myOrganisation"
+        every { retConsole.prompt("Enter your Rabobank project:", any()) } returns "myProject"
+        every { retConsole.prompt("Enter your Rabobank organisation:", any()) } returns "myOrganisation"
 
         command.run()
 
         val pluginConfig = readConfig()
-        assertThat(pluginConfig).containsExactlyInAnyOrderEntriesOf(
+        assertThat(pluginConfig).isEqualTo(
             mapOf(
                 "project" to "myProject",
                 "organisation" to "myOrganisation",
-                "plugin_version" to "unknown",
             ),
         )
     }
@@ -75,19 +73,18 @@ class PluginConfigureCommandTest {
         )
         storeConfig(demoConfig)
 
-        every { retConsole.prompt("Enter your project:", "oldProject") } returns "newProject"
+        every { retConsole.prompt("Enter your Rabobank project:", "oldProject") } returns "newProject"
         every {
-            retConsole.prompt("Enter your organisation:", "oldOrganisation")
+            retConsole.prompt("Enter your Rabobank organisation:", "oldOrganisation")
         } returns "newOrganisation"
 
         command.run()
 
         val pluginConfig = readConfig()
-        assertThat(pluginConfig).containsExactlyInAnyOrderEntriesOf(
+        assertThat(pluginConfig).isEqualTo(
             mapOf(
                 "project" to "newProject",
                 "organisation" to "newOrganisation",
-                "plugin_version" to "unknown",
             ),
         )
     }
@@ -97,21 +94,20 @@ class PluginConfigureCommandTest {
         val demoConfig = mapOf(
             "project" to "oldProject",
             "organisation" to "oldOrganisation",
-            "plugin_version" to "unknown",
         )
         storeConfig(demoConfig)
 
-        every { retConsole.prompt("Enter your project:", "oldProject") } returns ""
-        every { retConsole.prompt("Enter your organisation:", "oldOrganisation") } returns ""
+        every { retConsole.prompt("Enter your Rabobank project:", "oldProject") } returns ""
+        every { retConsole.prompt("Enter your Rabobank organisation:", "oldOrganisation") } returns ""
 
         command.run()
 
         val pluginConfig = readConfig()
-        assertThat(pluginConfig).containsExactlyInAnyOrderEntriesOf(demoConfig)
+        assertThat(pluginConfig).isEqualTo(demoConfig)
     }
 
     private fun storeConfig(demoConfig: Map<String, String>) {
-        demoConfig.forEach { (k, v) -> config[k] = v }
+        objectMapper.writeValue(pluginsPath.resolve("$pluginName.json").toFile(), demoConfig)
     }
 
     private fun readConfig() =
