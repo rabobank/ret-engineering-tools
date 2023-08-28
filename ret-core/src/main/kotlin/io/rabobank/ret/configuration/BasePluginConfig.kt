@@ -28,11 +28,7 @@ open class BasePluginConfig : Configurable {
     @Inject
     lateinit var retConfig: RetConfig
 
-    val config by lazy {
-        runCatching { objectMapper.readValue<Map<String, Any?>>(osUtils.getPluginConfig(pluginName).toFile()) }
-            .getOrDefault(emptyMap())
-            .toMutableMap()
-    }
+    val config by lazy { PluginConfig(pluginName, objectMapper, osUtils) }
 
     @PostConstruct
     fun migrateOldConfig() {
@@ -59,4 +55,21 @@ open class BasePluginConfig : Configurable {
      * The left should be the name of the old key and the right the name of the new key
      */
     open fun keysToMigrate() = emptyList<Pair<String, String>>()
+}
+
+class PluginConfig(pluginName: String, objectMapper: ObjectMapper, osUtils: OsUtils) {
+    private val config: MutableMap<String, Any?>
+
+    init {
+        config = runCatching { objectMapper.readValue<Map<String, Any?>>(osUtils.getPluginConfig(pluginName).toFile()) }
+            .getOrDefault(emptyMap())
+            .toMutableMap()
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    operator fun <T> get(key: String): T? = config[key] as T?
+
+    operator fun set(key: String, value: Any?) {
+        config[key] = value
+    }
 }
