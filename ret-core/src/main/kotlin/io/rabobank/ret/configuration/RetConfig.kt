@@ -72,6 +72,11 @@ class RetConfig(
     }
 
     /**
+     * Delete a property
+     */
+    fun remove(key: String) = properties.remove(key)
+
+    /**
      * Configure all defined configuration properties, based on the provided function and saves to the configuration file.
      * This is automatically called when initializing a plugin, so you normally do not call this yourself.
      */
@@ -82,7 +87,7 @@ class RetConfig(
 
     fun save() {
         properties[RET_VERSION] = retVersion
-        objectMapper.writeValue(configFile, properties)
+        objectMapper.writerWithDefaultPrettyPrinter().writeValue(configFile, properties)
     }
 
     override fun configFile(): Path = Path.of(configFile.toURI())

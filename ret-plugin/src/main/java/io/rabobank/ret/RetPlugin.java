@@ -31,7 +31,7 @@ public final class RetPlugin {
 
         try {
             var retContext = OBJECT_MAPPER.readValue(resultString, RetContext.class);
-            PluginConfiguration.RET_CONTEXT_INSTANCE = retContext;
+            RetContextConfiguration.RET_CONTEXT_INSTANCE = retContext;
             Quarkus.run(PicocliRunner.class, retContext.getCommand().toArray(new String[0]));
         } catch (JsonProcessingException e) {
             Log.error(e.getMessage(), e);

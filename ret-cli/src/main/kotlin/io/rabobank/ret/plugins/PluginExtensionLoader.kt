@@ -12,7 +12,7 @@ import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.walk
 
 @ApplicationScoped
-class PluginConfiguration {
+class PluginExtensionLoader {
 
     companion object {
         const val PLUGIN_EXTENSION = "plugin"
