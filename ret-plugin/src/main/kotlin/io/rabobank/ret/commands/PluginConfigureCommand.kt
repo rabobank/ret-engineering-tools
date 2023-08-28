@@ -47,7 +47,7 @@ class PluginConfigureCommand(
 
     private fun storePluginConfiguration(pluginName: String) {
         var hasPluginSpecificConfig = false
-        val pluginConfigFile = config.pluginConfigDirectory().resolve("${pluginName}.json").toFile()
+        val pluginConfigFile = config.pluginConfigDirectory().resolve("$pluginName.json").toFile()
         val pluginConfig = if (pluginConfigFile.exists()) objectMapper.readValue<Map<String, String>>(pluginConfigFile) else emptyMap()
 
         val answers = mutableMapOf<String, Any>()
@@ -67,7 +67,7 @@ class PluginConfigureCommand(
         }
 
         if (hasPluginSpecificConfig) {
-            objectMapper.writeValue(pluginConfigFile, answers)
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(pluginConfigFile, answers)
 
             retConsole.out("Wrote configuration to $pluginConfigFile")
         }
