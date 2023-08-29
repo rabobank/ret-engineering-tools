@@ -48,22 +48,22 @@ class PluginConfigureCommand(
     private fun storePluginConfiguration(pluginName: String) {
         var hasPluginSpecificConfig = false
         val pluginConfigFile = config.pluginConfigDirectory().resolve("$pluginName.json").toFile()
-        val pluginConfig = if (pluginConfigFile.exists()) objectMapper.readValue<Map<String, String>>(pluginConfigFile) else emptyMap()
+        val pluginConfig = if (pluginConfigFile.exists()) objectMapper.readValue<Map<String, Any?>>(pluginConfigFile) else emptyMap()
 
         val answers = mutableMapOf<String, Any>()
 
         config.configure {
             hasPluginSpecificConfig = true
             val message = it.toMessage()
-            val currentValue = pluginConfig[it.key]
+            val currentValue = (pluginConfig[it.key] as String?).orEmpty()
             var input = retConsole.prompt(message, currentValue)
 
-            while (it.required && input.ifEmpty { currentValue.orEmpty() }.isEmpty()) {
+            while (it.required && input.ifEmpty { currentValue }.isEmpty()) {
                 retConsole.out("Please fill in an answer")
                 input = retConsole.prompt(message, currentValue)
             }
 
-            answers[it.key] = input.ifEmpty { currentValue.orEmpty() }
+            answers[it.key] = input.ifEmpty { currentValue }
         }
 
         if (hasPluginSpecificConfig) {
