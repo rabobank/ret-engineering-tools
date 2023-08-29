@@ -1,6 +1,7 @@
 package io.rabobank.ret.util
 
 import io.quarkus.logging.Log
+import jakarta.annotation.Priority
 import jakarta.interceptor.AroundInvoke
 import jakarta.interceptor.Interceptor
 import jakarta.interceptor.InterceptorBinding
@@ -15,6 +16,7 @@ annotation class Logged
 
 @Interceptor
 @Logged
+@Priority(0)
 class CommandLoggingInterceptor {
 
     @AroundInvoke
