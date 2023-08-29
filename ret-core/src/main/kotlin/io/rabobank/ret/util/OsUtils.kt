@@ -24,6 +24,14 @@ class OsUtils {
             else -> error("Unsupported operating system")
         }
 
+    fun getPluginFileExtension(): String =
+        when {
+            IS_OS_WINDOWS -> "dll"
+            IS_OS_LINUX -> "so"
+            IS_OS_MAC -> "dylib"
+            else -> error("Unsupported operating system")
+        }
+
     /**
      * Get the path of the directory where RET files and configurations are stored (not configurable).
      * @return the RET directory.

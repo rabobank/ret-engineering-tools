@@ -15,7 +15,7 @@ import picocli.CommandLine
 class RetVersionProvider(private val versionProperties: VersionProperties = VersionProperties()) :
     CommandLine.IVersionProvider {
 
-    override fun getVersion(): Array<String> =
+    override fun getVersion() =
         arrayOf(
             "RET Version: ${versionProperties.getAppVersion()}",
             "Commit: ${versionProperties.getCommitHash()}",
