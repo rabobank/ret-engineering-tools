@@ -26,7 +26,7 @@ import kotlin.io.path.createDirectories
 class PluginInitializeCommand(
     private val retConsole: RetConsole,
     private val objectMapper: ObjectMapper,
-    osUtils: OsUtils,
+    private val osUtils: OsUtils,
 ) : Runnable {
     @Spec
     lateinit var commandSpec: CommandSpec
@@ -49,23 +49,23 @@ class PluginInitializeCommand(
         retConsole.out("Initializing plugin '$pluginName'")
         val pluginNameWithFallbackToParent = if (this::pluginPath.isInitialized) pluginPath else pluginName
         val plugin = File(pluginNameWithFallbackToParent)
-        val dylib = pluginDirectory.resolve("$pluginName.dylib").toFile()
+        val pluginFile = pluginDirectory.resolve("$pluginName.${osUtils.getPluginFileExtension()}").toFile()
 
         if (plugin.isAbsolute) {
-            if (dylib.exists() && plugin != dylib) {
+            if (pluginFile.exists() && plugin != pluginFile) {
                 val overwrite = retConsole.prompt("The plugin is already installed, overwrite [Yn]?", "Y")
                 if (overwrite.isBlank() || overwrite.lowercase() == "y") {
-                    plugin.copyTo(dylib, true)
-                    Log.info("Dynamic library overwritten for '$pluginName'")
+                    plugin.copyTo(pluginFile, true)
+                    Log.info("Plugin file overwritten for '$pluginName'")
                 }
             } else {
-                plugin.copyTo(dylib, true)
-                Log.info("Copied dynamic library for '$pluginName'")
+                plugin.copyTo(pluginFile, true)
+                Log.info("Copied plugin file for '$pluginName'")
             }
         }
 
-        if (!dylib.exists()) {
-            throw FileNotFoundException("$dylib does not exist")
+        if (!pluginFile.exists()) {
+            throw FileNotFoundException("$pluginFile does not exist")
         }
 
         Log.info("Generating/updating plugin file for '$pluginName'")

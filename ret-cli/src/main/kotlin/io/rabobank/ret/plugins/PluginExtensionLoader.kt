@@ -14,10 +14,6 @@ import kotlin.io.path.walk
 @ApplicationScoped
 class PluginExtensionLoader {
 
-    companion object {
-        const val PLUGIN_EXTENSION = "plugin"
-    }
-
     @OptIn(ExperimentalPathApi::class)
     @Produces
     @ApplicationScoped
@@ -27,9 +23,15 @@ class PluginExtensionLoader {
                 .map(Path::toFile)
                 .filter { it.extension == PLUGIN_EXTENSION }
                 .map { objectMapper.readValue<PluginDefinition>(it.readText()) }
-                .map { Plugin(it, pluginPath.resolve(it.dylibFile())) }
+                .map { Plugin(it, pluginPath.resolve(it.filename(osUtils))) }
                 .toList()
         }
 
-    private fun PluginDefinition.dylibFile() = libName.takeIf { it.endsWith(".dylib") } ?: "$libName.dylib"
+    private fun PluginDefinition.filename(osUtils: OsUtils) =
+        libName.takeIf { fileExtensionPattern.matches(it) } ?: "$libName.${osUtils.getPluginFileExtension()}"
+
+    private companion object {
+        private const val PLUGIN_EXTENSION = "plugin"
+        private val fileExtensionPattern = ".+\\.(dylib|so|dll)".toRegex()
+    }
 }
