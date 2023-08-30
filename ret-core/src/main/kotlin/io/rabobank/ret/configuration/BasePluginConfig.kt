@@ -2,6 +2,7 @@ package io.rabobank.ret.configuration
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import io.quarkus.logging.Log
 import io.rabobank.ret.util.OsUtils
 import jakarta.annotation.PostConstruct
 import jakarta.enterprise.context.Dependent
@@ -34,6 +35,7 @@ open class BasePluginConfig : Configurable {
     fun migrateOldConfig() {
         val keysToMigrate = keysToMigrate()
         if (keysToMigrate.isNotEmpty()) {
+            Log.info("Migrating old configuration to plugin specific configuration")
             keysToMigrate.forEach { (oldKey, newKey) ->
                 val oldValue = retConfig[oldKey]
                 if (oldValue != null) {
@@ -43,6 +45,7 @@ open class BasePluginConfig : Configurable {
                 }
             }
 
+            config.save()
             retConfig.save()
         }
     }
@@ -57,19 +60,22 @@ open class BasePluginConfig : Configurable {
     open fun keysToMigrate() = emptyList<Pair<String, String>>()
 }
 
-class PluginConfig(pluginName: String, objectMapper: ObjectMapper, osUtils: OsUtils) {
-    private val config: MutableMap<String, Any?>
+class PluginConfig(pluginName: String, private val objectMapper: ObjectMapper, osUtils: OsUtils) {
+    private val pluginFile = osUtils.getPluginConfig(pluginName).toFile()
+    val config = runCatching { objectMapper.readValue<Map<String, Any?>>(pluginFile) }
+        .getOrDefault(emptyMap())
+        .toMutableMap()
 
-    init {
-        config = runCatching { objectMapper.readValue<Map<String, Any?>>(osUtils.getPluginConfig(pluginName).toFile()) }
-            .getOrDefault(emptyMap())
-            .toMutableMap()
+    inline operator fun <reified T> get(key: String): T? {
+        val value = config[key]
+        return if (value is T?) value else error("The config value cannot be cast to ${T::class.java}")
     }
-
-    @Suppress("UNCHECKED_CAST")
-    operator fun <T> get(key: String): T? = config[key] as T?
 
     operator fun set(key: String, value: Any?) {
         config[key] = value
+    }
+
+    fun save() {
+        objectMapper.writeValue(pluginFile, config)
     }
 }
