@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.quarkus.logging.Log
 import io.rabobank.ret.RetConsole
 import io.rabobank.ret.util.IntrospectionUtil
+import io.rabobank.ret.util.Logged
 import io.rabobank.ret.util.OsUtils
 import picocli.CommandLine.Command
 import picocli.CommandLine.Model.CommandSpec
@@ -23,6 +24,7 @@ import kotlin.io.path.createDirectories
     name = "initialize",
     hidden = true,
 )
+@Logged
 class PluginInitializeCommand(
     private val retConsole: RetConsole,
     private val objectMapper: ObjectMapper,
