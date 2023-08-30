@@ -6,6 +6,7 @@ import io.quarkus.logging.Log
 import io.rabobank.ret.RetConsole
 import io.rabobank.ret.configuration.Config
 import io.rabobank.ret.configuration.ConfigurationProperty
+import io.rabobank.ret.util.Logged
 import picocli.CommandLine.Command
 import picocli.CommandLine.Model.CommandSpec
 import picocli.CommandLine.Spec
@@ -23,6 +24,7 @@ import picocli.CommandLine.Spec
         ConfigureProjectCommand::class,
     ],
 )
+@Logged
 class PluginConfigureCommand(
     private val config: Config,
     private val retConsole: RetConsole,
