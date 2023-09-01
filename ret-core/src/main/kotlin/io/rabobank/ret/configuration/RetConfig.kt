@@ -77,7 +77,8 @@ class RetConfig(
     fun remove(key: String) = properties.remove(key)
 
     /**
-     * Configure all defined configuration properties, based on the provided function and saves to the configuration file.
+     * Configure all defined configuration properties, based on the provided function,
+     * and saves to the configuration file.
      * This is automatically called when initializing a plugin, so you normally do not call this yourself.
      */
     override fun configure(function: (ConfigurationProperty) -> Unit) {
