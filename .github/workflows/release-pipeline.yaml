@@ -21,7 +21,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   name: Retrieve tag exists flag
-                uses: mukunku/tag-exists-action@v1.2.0
+                uses: mukunku/tag-exists-action@v1.3.0
                 id: checkTag
                 with:
                     tag: ${{ github.event.inputs.version }}
