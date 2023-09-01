@@ -27,7 +27,8 @@ class ConfigureProjectCommand(
         if (retConfig["projects"] == null) {
             retConfig["projects"] = listOf(Project(workingDir.name, workingDir.absolutePath))
         } else {
-            @Suppress("UNCHECKED_CAST") val projectsMap = retConfig["projects"] as MutableList<Project>
+            @Suppress("UNCHECKED_CAST")
+            val projectsMap = retConfig["projects"] as MutableList<Project>
             projectsMap += Project(workingDir.name, workingDir.absolutePath)
         }
 

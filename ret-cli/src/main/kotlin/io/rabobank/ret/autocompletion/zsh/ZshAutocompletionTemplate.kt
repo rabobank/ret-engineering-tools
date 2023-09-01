@@ -12,7 +12,8 @@ private const val AUTOCOMPLETION_FUNCTION_PREFIX = "function:"
 class ZshAutocompletionTemplate {
 
     /**
-     * Generates a ZSH function for a command containing either subcommands or positional parameters and possibly options(/flags).
+     * Generates a ZSH function for a command containing either subcommands
+     * or positional parameters and possibly options(/flags).
      */
     fun applyForCommand(
         functionName: String,
@@ -145,12 +146,13 @@ function $functionName() {
     }
 
     /**
-     * This data class holds the spec which will be added to ZSH's _arguments method, and the action describes what's done when a certain argument spec is matched.
+     * This data class holds the spec which will be added to ZSH's _arguments method,
+     * and the action describes what's done when a certain argument spec is matched.
      */
     data class ArgumentSpecActionPair(val spec: String, val action: String? = null)
 
     sealed interface AutoCompleteAction
-    object NoAction : AutoCompleteAction
+    data object NoAction : AutoCompleteAction
     data class FunctionCallAction(val functionName: String) : AutoCompleteAction
     data class StaticValuesAction(val staticValues: String) : AutoCompleteAction
 }
