@@ -1,8 +1,10 @@
 package io.rabobank.ret.configuration
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.convertValue
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.quarkus.logging.Log
+import io.rabobank.ret.RetConsole
 import io.rabobank.ret.util.OsUtils
 import jakarta.annotation.PostConstruct
 import jakarta.enterprise.context.Dependent
@@ -29,23 +31,31 @@ open class BasePluginConfig : Configurable {
     @Inject
     lateinit var retConfig: RetConfig
 
-    val config by lazy { PluginConfig(pluginName, objectMapper, osUtils) }
+    @Inject
+    lateinit var retConsole: RetConsole
+
+    val pluginConfig by lazy { PluginConfig(pluginName, objectMapper, osUtils) }
 
     @PostConstruct
     fun migrateOldConfig() {
+        val configCopy = pluginConfig.config.toMap()
+
         val keysToMigrate = keysToMigrate()
+
         if (keysToMigrate.isNotEmpty()) {
-            Log.info("Migrating old configuration to plugin specific configuration")
+            Log.debug("Migrating old configuration to plugin specific configuration")
             keysToMigrate.forEach { (oldKey, newKey) ->
                 val oldValue = retConfig[oldKey]
                 if (oldValue != null) {
-                    config[newKey] = oldValue
+                    pluginConfig[newKey] = oldValue
 
                     retConfig.remove(oldKey)
                 }
             }
+        }
 
-            config.save()
+        if (configCopy != pluginConfig.config) {
+            pluginConfig.save()
             retConfig.save()
         }
     }
@@ -58,6 +68,8 @@ open class BasePluginConfig : Configurable {
      * The left should be the name of the old key and the right the name of the new key
      */
     open fun keysToMigrate() = emptyList<Pair<String, String>>()
+
+    inline fun <reified T> convertTo() = objectMapper.convertValue<T>(pluginConfig.config)
 }
 
 class PluginConfig(pluginName: String, private val objectMapper: ObjectMapper, osUtils: OsUtils) {
@@ -68,7 +80,13 @@ class PluginConfig(pluginName: String, private val objectMapper: ObjectMapper, o
 
     inline operator fun <reified T> get(key: String): T? {
         val value = config[key]
-        return if (value is T?) value else error("The config value cannot be cast to ${T::class.java}")
+        return if (value is T?) {
+            value
+        } else {
+            error(
+                "The config value '$key' cannot be cast to ${T::class.java}, because it's of type ${value?.javaClass}",
+            )
+        }
     }
 
     operator fun set(key: String, value: Any?) {
@@ -76,6 +94,6 @@ class PluginConfig(pluginName: String, private val objectMapper: ObjectMapper, o
     }
 
     fun save() {
-        objectMapper.writeValue(pluginFile, config)
+        objectMapper.writerWithDefaultPrettyPrinter().writeValue(pluginFile, config)
     }
 }

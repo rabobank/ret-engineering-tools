@@ -51,8 +51,7 @@ class PluginConfigureCommand(
         var hasPluginSpecificConfig = false
         val pluginConfigFile = config.pluginConfigDirectory().resolve("$pluginName.json").toFile()
         val pluginConfig = if (pluginConfigFile.exists()) objectMapper.readValue<Map<String, Any?>>(pluginConfigFile) else emptyMap()
-
-        val answers = mutableMapOf<String, Any>()
+        val answers = pluginConfig.toMutableMap()
 
         config.configure {
             hasPluginSpecificConfig = true
