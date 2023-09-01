@@ -17,8 +17,10 @@ import kotlin.io.path.createDirectories
 /**
  * Plugin Initialize Command
  *
- * This is a mandatory sub command for any RET plugin that you create. RET will use it when executing `ret plugin initialize your-plugin`.
- * With this, RET will be able to run the plugin commands, automatically add autocompletion for the plugin, and prompt the user for any property that needs to be configured.
+ * This is a mandatory sub command for any RET plugin that you create.
+ * RET will use it when executing `ret plugin initialize your-plugin`.
+ *
+ * With this, RET will be able to run the plugin commands and automatically add autocompletion for the plugin.
  */
 @Command(
     name = "initialize",

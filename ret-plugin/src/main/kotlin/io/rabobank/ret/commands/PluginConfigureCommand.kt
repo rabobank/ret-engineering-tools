@@ -14,8 +14,10 @@ import picocli.CommandLine.Spec
 /**
  * Plugin Configure Command
  *
- * This is a mandatory sub command for any RET plugin that you create. RET will use it when executing `ret plugin configure your-plugin`.
- * With this, RET will be able to run the plugin commands, automatically add autocompletion for the plugin, and prompt the user for any property that needs to be configured.
+ * This is a sub command for any RET plugin that you create.
+ * RET will use it when executing `ret yourPlugin configure`.
+ *
+ * With this, RET will prompt the user for any property that needs to be configured.
  */
 @Command(
     name = "configure",
@@ -50,7 +52,8 @@ class PluginConfigureCommand(
     private fun storePluginConfiguration(pluginName: String) {
         var hasPluginSpecificConfig = false
         val pluginConfigFile = config.pluginConfigDirectory().resolve("$pluginName.json").toFile()
-        val pluginConfig = if (pluginConfigFile.exists()) objectMapper.readValue<Map<String, Any?>>(pluginConfigFile) else emptyMap()
+        val pluginConfig =
+            if (pluginConfigFile.exists()) objectMapper.readValue<Map<String, Any?>>(pluginConfigFile) else emptyMap()
         val answers = pluginConfig.toMutableMap()
 
         config.configure {
