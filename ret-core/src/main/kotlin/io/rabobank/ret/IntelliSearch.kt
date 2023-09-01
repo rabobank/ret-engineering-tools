@@ -26,7 +26,8 @@ data class FilterRound(val filter: String, val startIndex: Int, val endIndex: In
 /**
  * Match results like IntelliJ
  *
- * This class is used to match a string of characters to a possible candidate, based on partial string matching. The matching copies the behaviour of e.g. searching for classes in IntelliJ.
+ * This class is used to match a string of characters to a possible candidate, based on partial string matching.
+ * The matching copies the behaviour of e.g. searching for classes in IntelliJ.
  *
  * Example: "as" will positively match with "Admin Service" or "admin-service", and so will "adser".
  */
