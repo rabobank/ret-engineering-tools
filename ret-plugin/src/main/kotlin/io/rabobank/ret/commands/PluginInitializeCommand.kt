@@ -86,6 +86,7 @@ class PluginInitializeCommand(
 
     private fun createPluginInformationFile(pluginName: String) {
         val pluginDefinition = IntrospectionUtil.introspect(commandSpec.root(), pluginName)
-        objectMapper.writeValue(pluginDirectory.resolve("$pluginName.plugin").toFile(), pluginDefinition)
+        objectMapper.writerWithDefaultPrettyPrinter()
+            .writeValue(pluginDirectory.resolve("$pluginName.plugin").toFile(), pluginDefinition)
     }
 }

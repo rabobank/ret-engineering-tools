@@ -438,6 +438,7 @@
                     <artifactId>detekt-maven-plugin</artifactId>
                     <version>${detekt.version}</version>
                     <configuration>
+                        <buildUponDefaultConfig>true</buildUponDefaultConfig>
                         <config>detekt-rules.yml</config>
                     </configuration>
                     <executions>
