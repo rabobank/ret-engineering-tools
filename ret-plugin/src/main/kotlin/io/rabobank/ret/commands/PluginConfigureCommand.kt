@@ -1,7 +1,6 @@
 package io.rabobank.ret.commands
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import io.quarkus.logging.Log
 import io.rabobank.ret.RetConsole
 import io.rabobank.ret.configuration.Config
@@ -52,14 +51,13 @@ class PluginConfigureCommand(
     private fun storePluginConfiguration(pluginName: String) {
         var hasPluginSpecificConfig = false
         val pluginConfigFile = config.pluginConfigDirectory().resolve("$pluginName.json").toFile()
-        val pluginConfig =
-            if (pluginConfigFile.exists()) objectMapper.readValue<Map<String, Any?>>(pluginConfigFile) else emptyMap()
-        val answers = pluginConfig.toMutableMap()
+        val pluginConfig = config.load()
+        val answers = pluginConfig.config
 
         config.configure {
             hasPluginSpecificConfig = true
             val message = it.toMessage()
-            val currentValue = (pluginConfig[it.key] as String?).orEmpty()
+            val currentValue = (answers[it.key] as String?).orEmpty()
             var input = retConsole.prompt(message, currentValue)
 
             while (it.required && input.ifEmpty { currentValue }.isEmpty()) {
