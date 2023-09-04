@@ -107,7 +107,7 @@ class PluginConfigureCommandTest {
     }
 
     private fun storeConfig(demoConfig: Map<String, String>) {
-        objectMapper.writeValue(pluginsPath.resolve("$pluginName.json").toFile(), demoConfig)
+        demoConfig.forEach { (k, v) -> config[k] = v }
     }
 
     private fun readConfig() =

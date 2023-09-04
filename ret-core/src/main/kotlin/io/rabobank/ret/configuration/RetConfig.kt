@@ -42,6 +42,10 @@ class RetConfig(
 
         if (configFile.exists()) {
             properties = objectMapper.readValue<MutableMap<String, Any?>>(configFile)
+            if (properties[RET_VERSION] != retVersion) {
+                properties[RET_VERSION] = retVersion
+                save()
+            }
         }
     }
 
@@ -87,11 +91,18 @@ class RetConfig(
     }
 
     fun save() {
-        properties[RET_VERSION] = retVersion
         objectMapper.writerWithDefaultPrettyPrinter().writeValue(configFile, properties)
     }
 
     override fun configFile(): Path = Path.of(configFile.toURI())
 
     override fun pluginConfigDirectory(): Path = osUtils.getRetPluginsDirectory()
+
+    override fun load(): PluginConfig {
+        val pluginConfig = PluginConfig(mutableMapOf())
+        return configurables.fold(pluginConfig) { acc, configurable ->
+            acc.config.putAll(configurable.load().config)
+            acc
+        }
+    }
 }
