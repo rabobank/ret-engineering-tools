@@ -2,6 +2,7 @@ package io.rabobank.ret.commands
 
 import io.rabobank.ret.configuration.Config
 import io.rabobank.ret.configuration.ConfigurationProperty
+import io.rabobank.ret.configuration.PluginConfig
 import java.nio.file.Path
 import java.util.Properties
 
@@ -17,6 +18,9 @@ internal class TestConfig(private val pluginsPath: Path) : Config {
     override fun set(key: String, value: Any?) {
         properties[key] = value
     }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun load(): PluginConfig = PluginConfig(properties as MutableMap<String, Any?>)
 
     override fun configure(function: (ConfigurationProperty) -> Unit) {
         configProps.forEach(function)
