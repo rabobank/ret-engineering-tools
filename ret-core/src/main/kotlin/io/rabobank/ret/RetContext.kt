@@ -13,6 +13,7 @@ import io.quarkus.runtime.annotations.RegisterForReflection
  * This is a custom environment variable, set by the caller. By default, it is "CLI".
  * @property gitRepository the Git repository, if RET was called from a Git directory.
  * @property gitBranch the current Git branch, if RET was called from a Git repository.
+ * @property version the current version of RET.
  */
 @RegisterForReflection
 data class RetContext(
@@ -20,4 +21,5 @@ data class RetContext(
     val environment: String? = null,
     val gitRepository: String? = null,
     val gitBranch: String? = null,
+    val version: String? = null,
 )

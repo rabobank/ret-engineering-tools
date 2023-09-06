@@ -24,7 +24,7 @@ class RetConfig(
     private val retConsole: RetConsole,
     private val objectMapper: ObjectMapper,
     private val configurables: Instance<Configurable>,
-    @ConfigProperty(name = "quarkus.application.version") private val retVersion: String,
+    @ConfigProperty(name = "ret.version") private val retVersion: String,
 ) : Config {
     private val oldConfigFile = osUtils.getRetHomeDirectory().resolve("ret.config").toFile()
     private val oldConfigFileBackup = osUtils.getRetHomeDirectory().resolve("ret.config.bak").toFile()
