@@ -5,6 +5,7 @@ import io.quarkus.logging.Log
 import io.rabobank.ret.RetConsole
 import io.rabobank.ret.configuration.Config
 import io.rabobank.ret.configuration.ConfigurationProperty
+import io.rabobank.ret.configuration.version.VersionProperties
 import io.rabobank.ret.util.Logged
 import picocli.CommandLine.Command
 import picocli.CommandLine.Model.CommandSpec
@@ -21,15 +22,13 @@ import picocli.CommandLine.Spec
 @Command(
     name = "configure",
     hidden = true,
-    subcommands = [
-        ConfigureProjectCommand::class,
-    ],
 )
 @Logged
 class PluginConfigureCommand(
     private val config: Config,
     private val retConsole: RetConsole,
     private val objectMapper: ObjectMapper,
+    private val versionProperties: VersionProperties,
 ) : Runnable {
     @Spec
     lateinit var commandSpec: CommandSpec
@@ -52,12 +51,13 @@ class PluginConfigureCommand(
         var hasPluginSpecificConfig = false
         val pluginConfigFile = config.pluginConfigDirectory().resolve("$pluginName.json").toFile()
         val pluginConfig = config.load()
-        val answers = pluginConfig.config
+        val config = pluginConfig.config
+        config["plugin_version"] = versionProperties.getAppVersion()
 
-        config.configure {
+        this.config.configure {
             hasPluginSpecificConfig = true
             val message = it.toMessage()
-            val currentValue = (answers[it.key] as String?).orEmpty()
+            val currentValue = (config[it.key] as String?).orEmpty()
             var input = retConsole.prompt(message, currentValue)
 
             while (it.required && input.ifEmpty { currentValue }.isEmpty()) {
@@ -65,11 +65,11 @@ class PluginConfigureCommand(
                 input = retConsole.prompt(message, currentValue)
             }
 
-            answers[it.key] = input.ifEmpty { currentValue }
+            config[it.key] = input.ifEmpty { currentValue }
         }
 
         if (hasPluginSpecificConfig) {
-            objectMapper.writerWithDefaultPrettyPrinter().writeValue(pluginConfigFile, answers)
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(pluginConfigFile, config)
 
             retConsole.out("Wrote configuration to $pluginConfigFile")
         }

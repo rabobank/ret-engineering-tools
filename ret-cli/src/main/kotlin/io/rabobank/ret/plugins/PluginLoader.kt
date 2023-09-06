@@ -81,6 +81,7 @@ class PluginLoader(
             environment.name,
             executionContext.repositoryName(),
             executionContext.branchName(),
+            executionContext.version(),
         )
 
     private companion object {

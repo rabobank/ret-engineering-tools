@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import io.mockk.every
 import io.mockk.mockk
 import io.rabobank.ret.RetConsole
+import io.rabobank.ret.configuration.version.VersionProperties
 import org.apache.commons.io.FileUtils
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -39,7 +40,7 @@ class PluginConfigureCommandTest {
 
     @BeforeEach
     fun before() {
-        command = PluginConfigureCommand(config, retConsole, jacksonObjectMapper())
+        command = PluginConfigureCommand(config, retConsole, jacksonObjectMapper(), VersionProperties())
         command.commandSpec = CommandSpec.create()
             .parent(CommandSpec.create().name(pluginName))
     }
@@ -57,10 +58,11 @@ class PluginConfigureCommandTest {
         command.run()
 
         val pluginConfig = readConfig()
-        assertThat(pluginConfig).isEqualTo(
+        assertThat(pluginConfig).containsExactlyInAnyOrderEntriesOf(
             mapOf(
                 "project" to "myProject",
                 "organisation" to "myOrganisation",
+                "plugin_version" to "unknown",
             ),
         )
     }
@@ -81,10 +83,11 @@ class PluginConfigureCommandTest {
         command.run()
 
         val pluginConfig = readConfig()
-        assertThat(pluginConfig).isEqualTo(
+        assertThat(pluginConfig).containsExactlyInAnyOrderEntriesOf(
             mapOf(
                 "project" to "newProject",
                 "organisation" to "newOrganisation",
+                "plugin_version" to "unknown",
             ),
         )
     }
@@ -94,6 +97,7 @@ class PluginConfigureCommandTest {
         val demoConfig = mapOf(
             "project" to "oldProject",
             "organisation" to "oldOrganisation",
+            "plugin_version" to "unknown",
         )
         storeConfig(demoConfig)
 
@@ -103,7 +107,7 @@ class PluginConfigureCommandTest {
         command.run()
 
         val pluginConfig = readConfig()
-        assertThat(pluginConfig).isEqualTo(demoConfig)
+        assertThat(pluginConfig).containsExactlyInAnyOrderEntriesOf(demoConfig)
     }
 
     private fun storeConfig(demoConfig: Map<String, String>) {

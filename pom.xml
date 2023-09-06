@@ -40,6 +40,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.version>1.9.10</kotlin.version>
         <maven.compiler.release>17</maven.compiler.release>
@@ -51,20 +52,21 @@
         <jreleaser-maven-plugin.version>1.8.0</jreleaser-maven-plugin.version>
         <ktlint-maven-plugin.version>2.0.0</ktlint-maven-plugin.version>
         <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
+        <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
         <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
+        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
-        <quarkus.platform.version>3.3.1</quarkus.platform.version>
+        <quarkus.platform.version>3.3.2</quarkus.platform.version>
         <surefire-plugin.version>3.1.2</surefire-plugin.version>
         <versions-maven-plugin.version>2.16.0</versions-maven-plugin.version>
 
         <assertj-core.version>3.24.2</assertj-core.version>
         <commons-lang3.version>3.13.0</commons-lang3.version>
         <detekt.version>1.23.1</detekt.version>
-        <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
         <maven-surefire-junit5-tree-reporter.version>1.2.1</maven-surefire-junit5-tree-reporter.version>
         <mockito-kotlin.version>5.1.0</mockito-kotlin.version>
-        <quarkus-jgit.version>3.0.2</quarkus-jgit.version>
+        <quarkus-jgit.version>3.0.3</quarkus-jgit.version>
         <quarkus-junit5-mockk.version>2.1.0</quarkus-junit5-mockk.version>
         <sshd-core.version>2.10.0</sshd-core.version>
     </properties>
@@ -473,6 +475,14 @@
                     <configuration>
                         <!--suppress MavenModelInspection -->
                         <rulesUri>file:///${session.executionRootDirectory}/dependency-update-rules.xml</rulesUri>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven-resources-plugin.version}</version>
+                    <configuration>
+                        <propertiesEncoding>${project.build.sourceEncoding}</propertiesEncoding>
                     </configuration>
                 </plugin>
             </plugins>
