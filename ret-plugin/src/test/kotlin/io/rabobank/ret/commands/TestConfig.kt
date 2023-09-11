@@ -8,8 +8,8 @@ import java.util.Properties
 
 internal class TestConfig(private val pluginsPath: Path) : Config {
     private val configProps = listOf(
-        ConfigurationProperty("project", "Enter your Rabobank project", required = true),
-        ConfigurationProperty("organisation", "Enter your Rabobank organisation"),
+        ConfigurationProperty("project", "Enter your project", required = true),
+        ConfigurationProperty("organisation", "Enter your organisation"),
     )
     private val properties = Properties()
 
