@@ -10,9 +10,11 @@ import jakarta.inject.Inject
 import org.eclipse.microprofile.config.inject.ConfigProperty
 
 /**
- * Implement this interface in an ApplicationScoped class if you need custom configurations in your plugin.
- * Upon initializing the plugin, the user will be prompted for all provided configuration properties,
+ * Implement this class in an ApplicationScoped class if you need custom configurations in your plugin.
+ * Upon configuring the plugin, the user will be prompted for all provided configuration properties,
  * and inputs are saved in the RET configuration file.
+ *
+ * This class will also take care of migrating old "generic" configuration to plugin specific configuration.
  */
 open class Configurable {
     @ConfigProperty(name = "plugin.name", defaultValue = "ret")
@@ -51,6 +53,19 @@ open class Configurable {
             }
         }
 
+        val oldConfigToMigrate = properties().map { it.key }
+        if (oldConfigToMigrate.isNotEmpty()) {
+            oldConfigToMigrate.forEach {
+                val oldValue = retConfig[it]
+                if (oldValue != null) {
+                    configCopy[it] = oldValue
+
+                    retConfig.remove(it)
+                    configMigrated = true
+                }
+            }
+        }
+
         return if (configMigrated) {
             Log.debug("Migrated old configuration to plugin specific configuration")
             retConfig.save()
@@ -62,6 +77,9 @@ open class Configurable {
 
     fun load() = pluginConfig
 
+    /**
+     * An optional list of configuration properties that will be used to prompt the user to answer questions.
+     */
     open fun properties() = emptyList<ConfigurationProperty>()
 
     /**
