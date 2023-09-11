@@ -52,8 +52,8 @@ class PluginConfigureCommandTest {
 
     @Test
     fun newProperty() {
-        every { retConsole.prompt("Enter your Rabobank project:", any()) } returns "myProject"
-        every { retConsole.prompt("Enter your Rabobank organisation:", any()) } returns "myOrganisation"
+        every { retConsole.prompt("Enter your project:", any()) } returns "myProject"
+        every { retConsole.prompt("Enter your organisation:", any()) } returns "myOrganisation"
 
         command.run()
 
@@ -75,9 +75,9 @@ class PluginConfigureCommandTest {
         )
         storeConfig(demoConfig)
 
-        every { retConsole.prompt("Enter your Rabobank project:", "oldProject") } returns "newProject"
+        every { retConsole.prompt("Enter your project:", "oldProject") } returns "newProject"
         every {
-            retConsole.prompt("Enter your Rabobank organisation:", "oldOrganisation")
+            retConsole.prompt("Enter your organisation:", "oldOrganisation")
         } returns "newOrganisation"
 
         command.run()
@@ -101,8 +101,8 @@ class PluginConfigureCommandTest {
         )
         storeConfig(demoConfig)
 
-        every { retConsole.prompt("Enter your Rabobank project:", "oldProject") } returns ""
-        every { retConsole.prompt("Enter your Rabobank organisation:", "oldOrganisation") } returns ""
+        every { retConsole.prompt("Enter your project:", "oldProject") } returns ""
+        every { retConsole.prompt("Enter your organisation:", "oldOrganisation") } returns ""
 
         command.run()
 
