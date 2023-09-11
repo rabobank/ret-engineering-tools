@@ -36,7 +36,7 @@ class PluginInitializeCommandTest {
     private val retFolder by lazy { Files.createDirectory(mockUserHomeDirectory.resolve(".ret")) }
     private val pluginsPath by lazy {
         val path = Files.createDirectory(retFolder.resolve("plugins"))
-        val demoPlugin = "$pluginName.dylib"
+        val demoPlugin = "$pluginName.${osUtils.getPluginFileExtension()}"
         Files.createFile(path.resolve(demoPlugin))
         path
     }
@@ -52,7 +52,7 @@ class PluginInitializeCommandTest {
                 .parent(CommandLine(CommandSpec.create().name(pluginName)).commandSpec),
         )
         command.commandSpec = commandLine.commandSpec
-        command.pluginPath = pluginsPath.resolve("$pluginName.dylib").nameWithoutExtension
+        command.pluginPath = pluginsPath.resolve("$pluginName.${osUtils.getPluginFileExtension()}").nameWithoutExtension
     }
 
     @AfterEach
@@ -64,13 +64,17 @@ class PluginInitializeCommandTest {
     fun `should create plugin information file`() {
         command.run()
 
-        assertThat(mockUserHomeDirectory.resolve(".ret/plugins/$pluginName.dylib")).exists()
+        assertThat(
+            mockUserHomeDirectory.resolve(
+                ".ret/plugins/$pluginName.${osUtils.getPluginFileExtension()}",
+            ),
+        ).exists()
         assertThat(mockUserHomeDirectory.resolve(".ret/plugins/$pluginName.plugin")).exists()
     }
 
     @Test
     fun `should overwrite plugin information file if absolute path is passed and accepted`() {
-        val diffPlugin = pluginsPath.resolve(Path.of("extra", "demo-plugin.dylib"))
+        val diffPlugin = pluginsPath.resolve(Path.of("extra", "demo-plugin.${osUtils.getPluginFileExtension()}"))
         diffPlugin.parent.createDirectories()
         Files.createFile(diffPlugin)
         command.pluginPath = diffPlugin.toFile().path
@@ -79,7 +83,11 @@ class PluginInitializeCommandTest {
 
         command.run()
 
-        assertThat(mockUserHomeDirectory.resolve(".ret/plugins/$pluginName.dylib")).exists()
+        assertThat(
+            mockUserHomeDirectory.resolve(
+                ".ret/plugins/$pluginName.${osUtils.getPluginFileExtension()}",
+            ),
+        ).exists()
         assertThat(mockUserHomeDirectory.resolve(".ret/plugins/$pluginName.plugin")).exists()
     }
 }
