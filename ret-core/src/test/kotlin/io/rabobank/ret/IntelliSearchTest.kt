@@ -1,12 +1,10 @@
 package io.rabobank.ret
 
-import io.quarkus.test.junit.QuarkusTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 
-@QuarkusTest
 internal class IntelliSearchTest {
 
     companion object {
