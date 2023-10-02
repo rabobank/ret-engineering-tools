@@ -50,7 +50,7 @@
         <git-commit-id.version>6.0.0</git-commit-id.version>
         <jandex-maven-plugin.version>1.2.3</jandex-maven-plugin.version>
         <jreleaser-maven-plugin.version>1.8.0</jreleaser-maven-plugin.version>
-        <ktlint-maven-plugin.version>2.0.0</ktlint-maven-plugin.version>
+        <ktlint-maven-plugin.version>3.0.0</ktlint-maven-plugin.version>
         <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
         <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
         <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
