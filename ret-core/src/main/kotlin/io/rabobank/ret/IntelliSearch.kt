@@ -34,9 +34,9 @@ data class FilterRound(val filter: String, val startIndex: Int, val endIndex: In
 class IntelliSearch {
 
     companion object {
+        private const val MAX_LOOP_ROUNDS = 1000
         val BREAK_CHARACTER_REGEX = "[\\s_-]+".toRegex()
         val UPPERCASE_REGEX = "(?=\\p{Upper})".toRegex()
-        private const val maxLoopRounds = 1000
     }
 
     /**
@@ -67,7 +67,7 @@ class IntelliSearch {
         var loopRounds = 0
         var lastSearchHit: SearchHit? = null
 
-        filterPartLoop@ while (!filterRound.hasSucceeded() && loopRounds++ < maxLoopRounds) {
+        filterPartLoop@ while (!filterRound.hasSucceeded() && loopRounds++ < MAX_LOOP_ROUNDS) {
             val filterPart = filterRound.value
             Log.trace("Searching filterPart $filterRound")
 
