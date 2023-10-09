@@ -4,7 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped
 import jakarta.enterprise.inject.Produces
 
 @ApplicationScoped
-class PluginConfiguration {
+class RetContextConfiguration {
 
     companion object {
         @JvmField

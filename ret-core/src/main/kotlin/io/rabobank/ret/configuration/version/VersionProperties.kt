@@ -15,7 +15,7 @@ private const val GIT_PROPERTIES = "git.properties"
 @ApplicationScoped
 class VersionProperties {
 
-    private val properties: Properties = Properties()
+    private val properties = Properties()
     private val config = ConfigProvider.getConfig()
 
     init {
@@ -48,12 +48,8 @@ class VersionProperties {
     }
 
     private fun loadGitProperties() {
-        val inputStream = VersionProperties::class.java.classLoader.getResourceAsStream(GIT_PROPERTIES)
-
-        if (inputStream != null) {
-            properties.load(inputStream)
-        } else {
-            Log.error("No Git information available: cannot load git.properties file.")
-        }
+        VersionProperties::class.java.classLoader.getResourceAsStream(GIT_PROPERTIES)
+            ?.run { properties.load(this) }
+            ?: Log.debug("No Git information available: cannot load git.properties file.")
     }
 }

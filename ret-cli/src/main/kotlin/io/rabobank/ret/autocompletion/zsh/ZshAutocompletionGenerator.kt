@@ -18,18 +18,19 @@ class ZshAutocompletionGenerator(private val template: ZshAutocompletionTemplate
 
         return buildString {
             appendLine(SHEBANG)
-            functions.forEach { appendLine(it) }
-            loadLinesForResource("footer.sh").forEach { appendLine(it) }
+            functions.forEach(::appendLine)
+            loadLinesForResource().forEach(::appendLine)
         }
     }
 
-    private fun loadLinesForResource(resourceFile: String) =
-        ZshAutocompletionGenerator::class.java.getResourceAsStream("/autocompletion/zsh/$resourceFile")
+    private fun loadLinesForResource() =
+        ZshAutocompletionGenerator::class.java.getResourceAsStream("/autocompletion/zsh/footer.sh")
             ?.bufferedReader()?.lines()
-            ?: throw IllegalStateException("Cannot find $resourceFile for the autocompletion script")
+            ?: error("Cannot find footer.sh for the autocompletion script")
 
     /**
-     * This function generates a ZSH function for a command and calls this function recursively for all of its subcommands.
+     * This function generates a ZSH function for a command,
+     * and calls this function recursively for all of its subcommands.
      * @return A list containing all generated functions, ordered by hierarchy top-down.
      */
     private fun generateFunctionForCommandsRecursively(

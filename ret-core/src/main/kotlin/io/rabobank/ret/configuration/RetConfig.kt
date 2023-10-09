@@ -1,5 +1,9 @@
 package io.rabobank.ret.configuration
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.convertValue
+import com.fasterxml.jackson.module.kotlin.readValue
+import io.rabobank.ret.RetConsole
 import io.rabobank.ret.util.OsUtils
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.enterprise.inject.Instance
@@ -16,21 +20,44 @@ private const val RET_VERSION = "ret_config_version"
  */
 @ApplicationScoped
 class RetConfig(
-    osUtils: OsUtils,
+    private val osUtils: OsUtils,
+    private val retConsole: RetConsole,
+    private val objectMapper: ObjectMapper,
     private val configurables: Instance<Configurable>,
-    @ConfigProperty(name = "quarkus.application.version") private val retVersion: String,
+    @ConfigProperty(name = "ret.version") private val retVersion: String,
 ) : Config {
-    private val configFile = Path.of(osUtils.getHomeDirectory(), ".ret", "ret.config").toFile()
-    private val properties = Properties()
+    private val oldConfigFile = osUtils.getRetHomeDirectory().resolve("ret.config").toFile()
+    private val oldConfigFileBackup = osUtils.getRetHomeDirectory().resolve("ret.config.bak").toFile()
+    private val configFile = osUtils.getRetHomeDirectory().resolve("ret.json").toFile()
+    private var properties = mutableMapOf<String, Any?>()
 
     init {
         loadExistingProperties()
     }
 
     private fun loadExistingProperties() {
-        if (configFile.exists()) {
-            properties.load(configFile.inputStream())
+        if (oldConfigFile.exists() && !configFile.exists()) {
+            migrateConfig()
         }
+
+        if (configFile.exists()) {
+            properties = objectMapper.readValue<MutableMap<String, Any?>>(configFile)
+            if (properties[RET_VERSION] != retVersion) {
+                properties[RET_VERSION] = retVersion
+                save()
+            }
+        }
+    }
+
+    private fun migrateConfig() {
+        val oldProperties = Properties()
+            .apply { load(oldConfigFile.inputStream()) }
+        properties = objectMapper.convertValue<MutableMap<String, Any?>>(oldProperties)
+
+        if (!oldConfigFile.renameTo(oldConfigFileBackup)) {
+            retConsole.errorOut("Unable to rename $oldConfigFile to $oldConfigFileBackup")
+        }
+        save()
     }
 
     /**
@@ -38,29 +65,44 @@ class RetConfig(
      *
      * @return The configured value for [key], or null if not configured.
      */
-    override operator fun get(key: String) = properties[key] as String?
+    override operator fun get(key: String) = properties[key]
 
     /**
      * Set the [value] to property [key] in the user configurations.
      * This is automatically called when initializing a plugin, so you normally do not call this yourself.
      */
-    override operator fun set(key: String, value: String) {
+    override operator fun set(key: String, value: Any?) {
         properties[key] = value
     }
 
     /**
-     * Configure all defined configuration properties, based on the provided function and saves to the configuration file.
+     * Delete a property
+     */
+    fun remove(key: String) = properties.remove(key)
+
+    /**
+     * Configure all defined configuration properties, based on the provided function,
+     * and saves to the configuration file.
      * This is automatically called when initializing a plugin, so you normally do not call this yourself.
      */
     override fun configure(function: (ConfigurationProperty) -> Unit) {
-        configurables.flatMap { it.properties() }.forEach(function)
+        configurables.flatMap(Configurable::properties).forEach(function)
         save()
     }
 
-    private fun save() {
-        properties[RET_VERSION] = retVersion
-        properties.store(configFile.outputStream(), "")
+    fun save() {
+        objectMapper.writerWithDefaultPrettyPrinter().writeValue(configFile, properties)
     }
 
     override fun configFile(): Path = Path.of(configFile.toURI())
+
+    override fun pluginConfigDirectory(): Path = osUtils.getRetPluginsDirectory()
+
+    override fun load(): PluginConfig {
+        val pluginConfig = PluginConfig(mutableMapOf())
+        return configurables.fold(pluginConfig) { acc, configurable ->
+            acc.config.putAll(configurable.load().config)
+            acc
+        }
+    }
 }

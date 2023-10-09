@@ -1,4 +1,4 @@
-package io.rabobank.ret
+package io.rabobank.ret.util
 
 import io.rabobank.ret.plugin.Argument
 import io.rabobank.ret.plugin.Option
