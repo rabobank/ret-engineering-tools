@@ -46,7 +46,7 @@
         <maven.compiler.release>17</maven.compiler.release>
 
         <compiler-plugin.version>3.11.0</compiler-plugin.version>
-        <dokka-maven-plugin.version>1.9.0</dokka-maven-plugin.version>
+        <dokka-maven-plugin.version>1.9.10</dokka-maven-plugin.version>
         <git-commit-id.version>6.0.0</git-commit-id.version>
         <jandex-maven-plugin.version>1.2.3</jandex-maven-plugin.version>
         <jreleaser-maven-plugin.version>1.8.0</jreleaser-maven-plugin.version>
@@ -58,7 +58,7 @@
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
-        <quarkus.platform.version>3.4.1</quarkus.platform.version>
+        <quarkus.platform.version>3.4.3</quarkus.platform.version>
         <surefire-plugin.version>3.1.2</surefire-plugin.version>
         <versions-maven-plugin.version>2.16.1</versions-maven-plugin.version>
 
