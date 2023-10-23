@@ -9,9 +9,10 @@ import org.eclipse.microprofile.config.inject.ConfigProperty
 
 @ApplicationScoped
 class EnvironmentManager {
-
     @Produces
-    fun environment(@ConfigProperty(name = "ret.env", defaultValue = "CLI") retEnvironment: String): Environment =
+    fun environment(
+        @ConfigProperty(name = "ret.env", defaultValue = "CLI") retEnvironment: String,
+    ): Environment =
         runCatching {
             Log.debug("ret.env value is $retEnvironment")
             valueOf(retEnvironment)

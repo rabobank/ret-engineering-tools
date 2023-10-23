@@ -6,8 +6,10 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import java.io.Serial
 
 class CommaDelimitedToListDeserializer : StdDeserializer<List<String>>(String::class.java) {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext?) =
-        p.valueAsString?.run { split(",").map { it.trim() } }.orEmpty()
+    override fun deserialize(
+        p: JsonParser,
+        ctxt: DeserializationContext?,
+    ) = p.valueAsString?.run { split(",").map { it.trim() } }.orEmpty()
 
     companion object {
         @Serial

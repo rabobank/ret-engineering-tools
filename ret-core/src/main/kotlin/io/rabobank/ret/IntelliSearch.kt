@@ -33,11 +33,10 @@ data class FilterRound(val filter: String, val startIndex: Int, val endIndex: In
  */
 @ApplicationScoped
 class IntelliSearch {
-
     companion object {
+        private const val MAX_LOOP_ROUNDS = 1000
         val BREAK_CHARACTER_REGEX = "[\\s_-]+".toRegex()
         val UPPERCASE_REGEX = "(?=\\p{Upper})".toRegex()
-        private const val maxLoopRounds = 1000
     }
 
     /**
@@ -46,7 +45,10 @@ class IntelliSearch {
      * Example: [filter] "as" will positively match "Admin Service".
      * @return whether the result is a match.
      */
-    fun matches(filter: String, candidate: String): Boolean {
+    fun matches(
+        filter: String,
+        candidate: String,
+    ): Boolean {
         if (BREAK_CHARACTER_REGEX.replace(candidate, "").contains(BREAK_CHARACTER_REGEX.replace(filter, ""), true)) {
             return true
         }
@@ -68,7 +70,7 @@ class IntelliSearch {
         var loopRounds = 0
         var lastSearchHit: SearchHit? = null
 
-        filterPartLoop@ while (!filterRound.hasSucceeded() && loopRounds++ < maxLoopRounds) {
+        filterPartLoop@ while (!filterRound.hasSucceeded() && loopRounds++ < MAX_LOOP_ROUNDS) {
             val filterPart = filterRound.value
             Log.trace("Searching filterPart $filterRound")
 

@@ -12,7 +12,6 @@ import picocli.CommandLine.Option
  */
 @Command
 class ContextAwareness {
-
     @Option(
         names = ["--ignore-context-aware", "-ica"],
         description = ["Ignore context awareness"],

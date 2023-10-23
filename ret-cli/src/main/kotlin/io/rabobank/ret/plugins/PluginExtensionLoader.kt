@@ -13,11 +13,13 @@ import kotlin.io.path.walk
 
 @ApplicationScoped
 class PluginExtensionLoader {
-
     @OptIn(ExperimentalPathApi::class)
     @Produces
     @ApplicationScoped
-    fun plugins(osUtils: OsUtils, objectMapper: ObjectMapper): List<Plugin> =
+    fun plugins(
+        osUtils: OsUtils,
+        objectMapper: ObjectMapper,
+    ): List<Plugin> =
         osUtils.getRetPluginsDirectory().let { pluginPath ->
             pluginPath.walk()
                 .map(Path::toFile)

@@ -13,9 +13,10 @@ import org.jboss.logging.MDC
  */
 @ApplicationScoped
 class MdcConfig(private val versionProperties: VersionProperties) {
-
     @Suppress("unused")
-    fun onStart(@Observes ev: StartupEvent) {
+    fun onStart(
+        @Observes ev: StartupEvent,
+    ) {
         MDC.put("os", versionProperties.getOs())
         MDC.put("version", versionProperties.getAppVersion())
         MDC.put("commit", versionProperties.getCommitHash())

@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test
 import picocli.CommandLine.Model.CommandSpec
 
 internal class ConfigureCommandTest {
-
     private lateinit var command: ConfigureCommand
 
     private val retConsole = mockk<RetConsole>(relaxed = true)

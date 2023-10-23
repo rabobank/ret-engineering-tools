@@ -6,7 +6,6 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 
 internal class IntelliSearchTest {
-
     companion object {
         @JvmStatic
         fun arguments(): List<Arguments> =
@@ -39,7 +38,11 @@ internal class IntelliSearchTest {
 
     @ParameterizedTest
     @MethodSource("arguments")
-    fun test(filter: String, candidate: String, expectedValue: Boolean) {
+    fun test(
+        filter: String,
+        candidate: String,
+        expectedValue: Boolean,
+    ) {
         assertThat(target.matches(filter, candidate)).isEqualTo(expectedValue)
     }
 }

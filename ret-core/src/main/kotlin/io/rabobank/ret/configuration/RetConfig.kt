@@ -50,8 +50,9 @@ class RetConfig(
     }
 
     private fun migrateConfig() {
-        val oldProperties = Properties()
-            .apply { load(oldConfigFile.inputStream()) }
+        val oldProperties =
+            Properties()
+                .apply { load(oldConfigFile.inputStream()) }
         properties = objectMapper.convertValue<MutableMap<String, Any?>>(oldProperties)
 
         if (!oldConfigFile.renameTo(oldConfigFileBackup)) {
@@ -71,7 +72,10 @@ class RetConfig(
      * Set the [value] to property [key] in the user configurations.
      * This is automatically called when initializing a plugin, so you normally do not call this yourself.
      */
-    override operator fun set(key: String, value: Any?) {
+    override operator fun set(
+        key: String,
+        value: Any?,
+    ) {
         properties[key] = value
     }
 

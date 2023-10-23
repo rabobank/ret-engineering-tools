@@ -4,7 +4,6 @@ import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 
 internal class GitContext internal constructor(private val repository: Repository) {
-
     fun repositoryName(): String? {
         val remoteOriginURL: String? = repository.config.getString("remote", "origin", "url")
         return remoteOriginURL?.substringAfterLast("/")

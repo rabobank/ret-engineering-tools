@@ -8,7 +8,6 @@ private const val SHEBANG = "#!/bin/zsh"
 
 @ApplicationScoped
 class ZshAutocompletionGenerator(private val template: ZshAutocompletionTemplate) {
-
     /**
      * This function generates the full ZSH autocompletion script for the command that's provided and all subcommands
      */
@@ -40,14 +39,16 @@ class ZshAutocompletionGenerator(private val template: ZshAutocompletionTemplate
     ): List<String> {
         val functionName = "${functionPrefix}_${commandLine.commandName}"
 
-        val subcommands = commandLine.subcommands.values
-            .filterNot { it.commandSpec.usageMessage().hidden() }
-            .sortedBy { it.commandName }
+        val subcommands =
+            commandLine.subcommands.values
+                .filterNot { it.commandSpec.usageMessage().hidden() }
+                .sortedBy { it.commandName }
 
-        val options = commandLine.commandSpec
-            .options()
-            .filterNot { it.hidden() }
-            .sortedBy { it.shortestName() }
+        val options =
+            commandLine.commandSpec
+                .options()
+                .filterNot { it.hidden() }
+                .sortedBy { it.shortestName() }
 
         val positionalParameters = commandLine.commandSpec.positionalParameters()
 
@@ -56,9 +57,10 @@ class ZshAutocompletionGenerator(private val template: ZshAutocompletionTemplate
         return if (shouldGenerateFunction) {
             val function =
                 template.applyForCommand(functionName, subcommands, positionalParameters, options, isRootFunction)
-            val subcommandFunctions = subcommands.flatMap {
-                generateFunctionForCommandsRecursively(it, functionName, false)
-            }
+            val subcommandFunctions =
+                subcommands.flatMap {
+                    generateFunctionForCommandsRecursively(it, functionName, false)
+                }
             listOf(function) + subcommandFunctions
         } else {
             listOf()

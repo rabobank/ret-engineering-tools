@@ -107,7 +107,10 @@ class PluginConfig(val config: MutableMap<String, Any?>) {
         }
     }
 
-    operator fun set(key: String, value: Any?) {
+    operator fun set(
+        key: String,
+        value: Any?,
+    ) {
         config[key] = value
     }
 }
@@ -115,11 +118,12 @@ class PluginConfig(val config: MutableMap<String, Any?>) {
 class PluginConfigLoader(pluginName: String, private val objectMapper: ObjectMapper, osUtils: OsUtils) {
     private val pluginFile = osUtils.getPluginConfig(pluginName).toFile()
 
-    fun load() = PluginConfig(
-        runCatching { objectMapper.readValue<Map<String, Any?>>(pluginFile) }
-            .getOrDefault(emptyMap())
-            .toMutableMap(),
-    )
+    fun load() =
+        PluginConfig(
+            runCatching { objectMapper.readValue<Map<String, Any?>>(pluginFile) }
+                .getOrDefault(emptyMap())
+                .toMutableMap(),
+        )
 
     fun saveAndReload(pluginConfig: PluginConfig): PluginConfig {
         if (!pluginFile.parentFile.exists() && !pluginFile.parentFile.mkdirs()) {

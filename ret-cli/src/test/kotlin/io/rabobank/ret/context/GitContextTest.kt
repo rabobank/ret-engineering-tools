@@ -7,17 +7,17 @@ import org.eclipse.jgit.lib.Repository
 import org.junit.jupiter.api.Test
 
 internal class GitContextTest {
-
     private val mockedGitRepository = mockk<Repository>()
     private val gitContext = GitContext(mockedGitRepository)
 
     @Test
     fun getRepositoryFromRemoteURL() {
-        every { mockedGitRepository.config } returns mockk {
-            every {
-                getString("remote", "origin", "url")
-            } returns "git@ssh.dev.azure.com:v3/raboweb/Skunk%20Works/rabobank-engineering-tools"
-        }
+        every { mockedGitRepository.config } returns
+            mockk {
+                every {
+                    getString("remote", "origin", "url")
+                } returns "git@ssh.dev.azure.com:v3/raboweb/Skunk%20Works/rabobank-engineering-tools"
+            }
 
         val actualRepositoryName = gitContext.repositoryName()
 

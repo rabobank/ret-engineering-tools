@@ -14,7 +14,6 @@ private const val GIT_PROPERTIES = "git.properties"
  */
 @ApplicationScoped
 class VersionProperties {
-
     private val properties = Properties()
     private val config = ConfigProvider.getConfig()
 

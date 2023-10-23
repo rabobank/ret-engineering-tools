@@ -13,7 +13,6 @@ import java.net.URL
  */
 @ApplicationScoped
 class BrowserUtils {
-
     /**
      * Open the provided [url] in a browser.
      */

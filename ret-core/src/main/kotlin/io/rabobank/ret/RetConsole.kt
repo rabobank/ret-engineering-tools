@@ -12,9 +12,9 @@ import picocli.CommandLine.ParseResult
  */
 @ApplicationScoped
 class RetConsole(parseResult: ParseResult) {
-
-    private val commandLine = parseResult.commandSpec().commandLine()
-        .setColorScheme(ColorScheme.Builder().ansi(CommandLine.Help.Ansi.AUTO).build())
+    private val commandLine =
+        parseResult.commandSpec().commandLine()
+            .setColorScheme(ColorScheme.Builder().ansi(CommandLine.Help.Ansi.AUTO).build())
 
     /**
      * Prints the [message] to the user.
@@ -34,7 +34,10 @@ class RetConsole(parseResult: ParseResult) {
      * Prompts the user with [message] and mentions the [currentValue], if provided before.
      * @return the answer, as entered by the user.
      */
-    fun prompt(message: String, currentValue: String?): String {
+    fun prompt(
+        message: String,
+        currentValue: String?,
+    ): String {
         val messageWithDefault = if (currentValue.isNullOrEmpty()) message else "$message [$currentValue]"
         out(messageWithDefault)
         return readln()
