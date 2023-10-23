@@ -7,8 +7,10 @@ import io.rabobank.ret.plugin.PluginDefinition
 import picocli.CommandLine.Model.CommandSpec
 
 object IntrospectionUtil {
-
-    fun introspect(commandSpec: CommandSpec, pluginName: String) = PluginDefinition(
+    fun introspect(
+        commandSpec: CommandSpec,
+        pluginName: String,
+    ) = PluginDefinition(
         pluginName,
         listOf(generateCommand(commandSpec)),
         loadCustomZshAutocompletion(),
@@ -22,23 +24,30 @@ object IntrospectionUtil {
     private fun generateCommand(commandSpec: CommandSpec): PluginCommand {
         val commandName = commandSpec.name()
 
-        val arguments = commandSpec.positionalParameters().map {
-            Argument(
-                it.paramLabel(),
-                it.index().toString(),
-                it.completionCandidates()?.toList() ?: emptyList(),
-                it.arity().toString(),
-            )
-        }
-        val options = commandSpec.options()
-            .map {
-                Option(it.names().toList(), it.type().canonicalName, it.completionCandidates()?.toList() ?: emptyList())
+        val arguments =
+            commandSpec.positionalParameters().map {
+                Argument(
+                    it.paramLabel(),
+                    it.index().toString(),
+                    it.completionCandidates()?.toList() ?: emptyList(),
+                    it.arity().toString(),
+                )
             }
+        val options =
+            commandSpec.options()
+                .map {
+                    Option(
+                        it.names().toList(),
+                        it.type().canonicalName,
+                        it.completionCandidates()?.toList() ?: emptyList(),
+                    )
+                }
 
-        val subcommands = commandSpec.subcommands().values
-            .map {
-                generateCommand(it.commandSpec)
-            }
+        val subcommands =
+            commandSpec.subcommands().values
+                .map {
+                    generateCommand(it.commandSpec)
+                }
 
         val description = commandSpec.usageMessage().description().joinToString(" | ")
 

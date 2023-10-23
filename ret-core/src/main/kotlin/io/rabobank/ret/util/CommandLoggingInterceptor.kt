@@ -18,7 +18,6 @@ annotation class Logged
 @Logged
 @Priority(0)
 class CommandLoggingInterceptor {
-
     @AroundInvoke
     fun intercept(context: InvocationContext): Any? {
         val targetClass = context.method.declaringClass.name

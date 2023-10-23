@@ -10,7 +10,6 @@ private const val AUTOCOMPLETION_FUNCTION_PREFIX = "function:"
 
 @ApplicationScoped
 class ZshAutocompletionTemplate {
-
     /**
      * Generates a ZSH function for a command containing either subcommands
      * or positional parameters and possibly options(/flags).
@@ -22,11 +21,12 @@ class ZshAutocompletionTemplate {
         options: List<OptionSpec>,
         isRootFunction: Boolean,
     ): String {
-        val commandOrParameterSpecActionPairs = when {
-            subcommands.isNotEmpty() -> generateSubcommandSpecActionPairs(subcommands, functionName)
-            positionalParameters.isNotEmpty() -> generatePositionalParameterSpecActionPairs(positionalParameters)
-            else -> emptyList()
-        }
+        val commandOrParameterSpecActionPairs =
+            when {
+                subcommands.isNotEmpty() -> generateSubcommandSpecActionPairs(subcommands, functionName)
+                positionalParameters.isNotEmpty() -> generatePositionalParameterSpecActionPairs(positionalParameters)
+                else -> emptyList()
+            }
 
         val allSpecActionPairs = commandOrParameterSpecActionPairs + generateOptionSpecActionPairs(options)
 
@@ -54,22 +54,25 @@ function $functionName() {
         subcommands: List<CommandLine>,
         parentFunctionName: String,
     ): List<ArgumentSpecActionPair> {
-        val overviewValues = subcommands.joinToString(" ") {
-            val description = it.commandSpec.usageMessage().description().firstOrNull() ?: ""
-            "'${it.commandName}[$description]'"
-        }
+        val overviewValues =
+            subcommands.joinToString(" ") {
+                val description = it.commandSpec.usageMessage().description().firstOrNull() ?: ""
+                "'${it.commandName}[$description]'"
+            }
 
         val overviewTitle = parentFunctionName.replace("_", " ")
-        val subcommandOverview = ArgumentSpecActionPair(
-            "\"1:$overviewTitle subcommands:->subcommands_overview\"",
-            "subcommands_overview) _values \"autocompletion candidates\" $overviewValues;;",
-        )
+        val subcommandOverview =
+            ArgumentSpecActionPair(
+                "\"1:$overviewTitle subcommands:->subcommands_overview\"",
+                "subcommands_overview) _values \"autocompletion candidates\" $overviewValues;;",
+            )
 
-        val subcommandActions = ArgumentSpecActionPair(
-            "\"*::arg:->call_subcommand\"",
-            "call_subcommand) function=\"${parentFunctionName}_${'$'}{line[1]}\"; " +
-                "_call_function_if_exists \"${'$'}function\";;",
-        )
+        val subcommandActions =
+            ArgumentSpecActionPair(
+                "\"*::arg:->call_subcommand\"",
+                "call_subcommand) function=\"${parentFunctionName}_${'$'}{line[1]}\"; " +
+                    "_call_function_if_exists \"${'$'}function\";;",
+            )
 
         return listOf(subcommandOverview, subcommandActions)
     }
@@ -77,13 +80,14 @@ function $functionName() {
     private fun generateOptionSpecActionPairs(options: List<OptionSpec>) =
         options.withIndex().map {
             val orderedOptionNames = it.value.names().sortedBy { name -> name.length }
-            val namesDefinition = if (orderedOptionNames.size == 1) {
-                it.value.names()[0]
-            } else {
-                val optionNamesSpaceSeparated = orderedOptionNames.joinToString(" ")
-                val optionNamesCommaSeparated = orderedOptionNames.joinToString(",")
-                "($optionNamesSpaceSeparated)'{$optionNamesCommaSeparated}'"
-            }
+            val namesDefinition =
+                if (orderedOptionNames.size == 1) {
+                    it.value.names()[0]
+                } else {
+                    val optionNamesSpaceSeparated = orderedOptionNames.joinToString(" ")
+                    val optionNamesCommaSeparated = orderedOptionNames.joinToString(",")
+                    "($optionNamesSpaceSeparated)'{$optionNamesCommaSeparated}'"
+                }
 
             val description = it.value.description().joinToString("")
             val isFlagOption = it.value.type() == java.lang.Boolean.TYPE || it.value.type() == Boolean::class.java
@@ -153,6 +157,8 @@ function $functionName() {
 
     sealed interface AutoCompleteAction
     data object NoAction : AutoCompleteAction
+
     data class FunctionCallAction(val functionName: String) : AutoCompleteAction
+
     data class StaticValuesAction(val staticValues: String) : AutoCompleteAction
 }

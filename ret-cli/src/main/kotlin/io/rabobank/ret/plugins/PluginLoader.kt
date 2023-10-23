@@ -21,7 +21,6 @@ class PluginLoader(
     private val executionContext: ExecutionContext,
     private val environment: Environment,
 ) {
-
     fun getPluginCommands(commandLine: CommandLine): List<PluginCommandEntry> =
         plugins.flatMap { plugin ->
             plugin.pluginDefinition.commands.map {
@@ -36,14 +35,15 @@ class PluginLoader(
         commandLine: CommandLine,
         plugin: Plugin,
     ): CommandSpec {
-        val commandSpec = CommandSpec.wrapWithoutInspection(
-            Runnable {
-                System.load(plugin.pluginLocation.pathString)
-                val retContext = createRetContext(commandLine.parseResult, topCommand)
-                val isolate = RetPlugin.createIsolate()
-                RetPlugin.invoke(isolate, objectMapper.writeValueAsString(retContext))
-            },
-        )
+        val commandSpec =
+            CommandSpec.wrapWithoutInspection(
+                Runnable {
+                    System.load(plugin.pluginLocation.pathString)
+                    val retContext = createRetContext(commandLine.parseResult, topCommand)
+                    val isolate = RetPlugin.createIsolate()
+                    RetPlugin.invoke(isolate, objectMapper.writeValueAsString(retContext))
+                },
+            )
 
         commandSpec.usageMessage().description(command.description)
         commandSpec.usageMessage().hidden(command.hidden)
@@ -75,7 +75,10 @@ class PluginLoader(
         return commandSpec
     }
 
-    private fun createRetContext(parseResult: ParseResult, topCommand: String): RetContext =
+    private fun createRetContext(
+        parseResult: ParseResult,
+        topCommand: String,
+    ): RetContext =
         RetContext(
             parseResult.originalArgs().filter { it != topCommand },
             environment.name,

@@ -26,7 +26,9 @@ class ConfigureCommand(
         name = "autocomplete",
         description = ["Prints the command to install autocomplete. Supported shells are: zsh"],
     )
-    fun printInstallAutocompleteCommand(@Parameters(description = ["shells"]) shell: String) {
+    fun printInstallAutocompleteCommand(
+        @Parameters(description = ["shells"]) shell: String,
+    ) {
         if (shell.lowercase() == "zsh") {
             printConfigureZsh()
         } else {
