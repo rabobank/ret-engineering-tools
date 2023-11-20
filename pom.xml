@@ -60,7 +60,7 @@
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
         <quarkus.platform.version>3.5.1</quarkus.platform.version>
         <surefire-plugin.version>3.2.2</surefire-plugin.version>
-        <versions-maven-plugin.version>2.16.1</versions-maven-plugin.version>
+        <versions-maven-plugin.version>2.16.2</versions-maven-plugin.version>
 
         <assertj-core.version>3.24.2</assertj-core.version>
         <commons-lang3.version>3.13.0</commons-lang3.version>
