@@ -90,7 +90,7 @@ jobs:
                 run: mvn -B -ntp --file pom.xml -Pdist package -DskipTests
 
             -   name: 'Upload build artifact'
-                uses: actions/upload-artifact@v3
+                uses: actions/upload-artifact@v4
                 with:
                     name: artifacts-cli
                     path: |
@@ -121,7 +121,7 @@ jobs:
                     mvn -B --file pom.xml -Ppublication
 
             -   name: 'Upload build artifact'
-                uses: actions/upload-artifact@v3
+                uses: actions/upload-artifact@v4
                 with:
                     name: artifacts-plugin
                     path: |
