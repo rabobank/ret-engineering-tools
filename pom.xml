@@ -69,7 +69,7 @@
         <mockito-kotlin.version>5.1.0</mockito-kotlin.version>
         <quarkus-jgit.version>3.0.6</quarkus-jgit.version>
         <quarkus-junit5-mockk.version>2.1.0</quarkus-junit5-mockk.version>
-        <sshd-core.version>2.11.0</sshd-core.version>
+        <sshd-core.version>2.12.0</sshd-core.version>
     </properties>
 
     <dependencyManagement>
