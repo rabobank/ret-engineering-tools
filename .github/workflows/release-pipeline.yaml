@@ -143,7 +143,7 @@ jobs:
                     git checkout --progress --force refs/tags/${{ github.event.inputs.version }}
 
             -   name: 'Download all build artifacts'
-                uses: actions/download-artifact@v4
+                uses: actions/download-artifact@v3
 
             -   name: 'Set up Java'
                 uses: actions/setup-java@v4
