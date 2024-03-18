@@ -72,7 +72,6 @@ jobs:
                 with:
                     distribution: 'graalvm'
                     java-version: ${{ env.JAVA_VERSION }}
-                    components: 'native-image'
                     github-token: ${{ secrets.GITHUB_TOKEN }}
 
             -   name: 'Cache Maven packages'
