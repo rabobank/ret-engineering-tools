@@ -6,7 +6,7 @@ on:
         branches: [ main ]
 
 env:
-    JAVA_VERSION: '19'
+    JAVA_VERSION: '21'
     JAVA_DISTRO: 'zulu'
 
 jobs:
