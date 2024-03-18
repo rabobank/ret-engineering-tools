@@ -11,8 +11,7 @@ on:
                 required: true
 
 env:
-    GRAAL_VERSION: '22.3.0'
-    JAVA_VERSION: '19'
+    JAVA_VERSION: '21'
     JAVA_DISTRO: 'zulu'
 
 jobs:
@@ -71,7 +70,7 @@ jobs:
             -   name: 'Set up Graal'
                 uses: graalvm/setup-graalvm@v1
                 with:
-                    version: ${{ env.GRAAL_VERSION }}
+                    distribution: 'graalvm'
                     java-version: ${{ env.JAVA_VERSION }}
                     components: 'native-image'
                     github-token: ${{ secrets.GITHUB_TOKEN }}
