@@ -365,6 +365,7 @@
                             <packagers>
                                 <brew>
                                     <active>ALWAYS</active>
+                                    <multiPlatform>true</multiPlatform>
                                 </brew>
                             </packagers>
                         </jreleaser>
