@@ -4,7 +4,7 @@
 
     <groupId>io.github.rabobank</groupId>
     <artifactId>ret</artifactId>
-    <version>0.2.4-SNAPSHOT</version>
+    <version>0.2.3</version>
     <packaging>pom</packaging>
     <name>RET Engineering Tools</name>
     <url>https://github.com/rabobank/ret-engineering-tools</url>
@@ -22,7 +22,7 @@
         <connection>scm:git:https://github.com/rabobank/ret-engineering-tools.git</connection>
         <developerConnection>scm:git:https://github.com/rabobank/ret-engineering-tools.git</developerConnection>
         <url>https://github.com/rabobank/ret-engineering-tools</url>
-        <tag>HEAD</tag>
+        <tag>0.2.3</tag>
     </scm>
 
     <developers>
