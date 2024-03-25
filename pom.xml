@@ -44,7 +44,7 @@
         <kotlin.version>1.9.23</kotlin.version>
         <maven.compiler.release>21</maven.compiler.release>
 
-        <compiler-plugin.version>3.12.1</compiler-plugin.version>
+        <compiler-plugin.version>3.13.0</compiler-plugin.version>
         <dokka-maven-plugin.version>1.9.20</dokka-maven-plugin.version>
         <git-commit-id.version>8.0.1</git-commit-id.version>
         <jandex-maven-plugin.version>1.2.3</jandex-maven-plugin.version>
