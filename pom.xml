@@ -51,7 +51,7 @@
         <jreleaser-maven-plugin.version>1.14.0</jreleaser-maven-plugin.version>
         <ktlint-maven-plugin.version>3.2.0</ktlint-maven-plugin.version>
         <maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
-        <maven-deploy-plugin.version>3.1.2</maven-deploy-plugin.version>
+        <maven-deploy-plugin.version>3.1.3</maven-deploy-plugin.version>
         <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
         <maven-release-plugin.version>3.1.1</maven-release-plugin.version>
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
