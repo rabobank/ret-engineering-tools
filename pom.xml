@@ -48,7 +48,7 @@
         <dokka-maven-plugin.version>2.0.0</dokka-maven-plugin.version>
         <git-commit-id.version>9.0.1</git-commit-id.version>
         <jandex-maven-plugin.version>1.2.3</jandex-maven-plugin.version>
-        <jreleaser-maven-plugin.version>1.15.0</jreleaser-maven-plugin.version>
+        <jreleaser-maven-plugin.version>1.16.0</jreleaser-maven-plugin.version>
         <ktlint-maven-plugin.version>3.4.0</ktlint-maven-plugin.version>
         <maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
         <maven-deploy-plugin.version>3.1.3</maven-deploy-plugin.version>
