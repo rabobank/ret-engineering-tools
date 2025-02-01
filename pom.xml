@@ -61,7 +61,7 @@
         <surefire-plugin.version>3.5.2</surefire-plugin.version>
         <versions-maven-plugin.version>2.18.0</versions-maven-plugin.version>
 
-        <assertj-core.version>3.27.0</assertj-core.version>
+        <assertj-core.version>3.27.3</assertj-core.version>
         <commons-lang3.version>3.17.0</commons-lang3.version>
         <detekt.version>1.23.7</detekt.version>
         <maven-surefire-junit5-tree-reporter.version>1.4.0</maven-surefire-junit5-tree-reporter.version>
