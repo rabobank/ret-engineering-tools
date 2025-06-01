@@ -41,12 +41,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <kotlin.code.style>official</kotlin.code.style>
-        <kotlin.version>2.1.20</kotlin.version>
+        <kotlin.version>2.1.21</kotlin.version>
         <maven.compiler.release>21</maven.compiler.release>
 
         <compiler-plugin.version>3.14.0</compiler-plugin.version>
         <dokka-maven-plugin.version>2.0.0</dokka-maven-plugin.version>
-        <git-commit-id.version>9.0.1</git-commit-id.version>
+        <git-commit-id.version>9.0.2</git-commit-id.version>
         <jandex-maven-plugin.version>1.2.3</jandex-maven-plugin.version>
         <jreleaser-maven-plugin.version>1.18.0</jreleaser-maven-plugin.version>
         <ktlint-maven-plugin.version>3.5.0</ktlint-maven-plugin.version>
@@ -57,7 +57,7 @@
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
-        <quarkus.platform.version>3.22.1</quarkus.platform.version>
+        <quarkus.platform.version>3.23.0</quarkus.platform.version>
         <surefire-plugin.version>3.5.3</surefire-plugin.version>
         <versions-maven-plugin.version>2.18.0</versions-maven-plugin.version>
 
