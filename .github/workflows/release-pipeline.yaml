@@ -25,7 +25,7 @@ jobs:
                 with:
                     tag: ${{ github.event.inputs.version }}
 
-            -   uses: actions/checkout@v4
+            -   uses: actions/checkout@v5
                 if: steps.checkTag.outputs.exists == 'false'
                 with:
                     persist-credentials: false
@@ -33,7 +33,7 @@ jobs:
 
             -   name: 'Set up Java'
                 if: steps.checkTag.outputs.exists == 'false'
-                uses: actions/setup-java@v4
+                uses: actions/setup-java@v5
                 with:
                     java-version: ${{ env.JAVA_VERSION }}
                     distribution: ${{ env.JAVA_DISTRO }}
@@ -62,7 +62,7 @@ jobs:
         runs-on: ${{ matrix.os }}
         steps:
             -   name: 'Check out repository'
-                uses: actions/checkout@v4
+                uses: actions/checkout@v5
                 with:
                     ref: ${{ github.event.inputs.version }}
                     fetch-depth: 0
@@ -103,13 +103,13 @@ jobs:
 
         steps:
             -   name: Checkout
-                uses: actions/checkout@v4
+                uses: actions/checkout@v5
                 with:
                     ref: ${{ github.event.inputs.version }}
                     fetch-depth: 0
 
             -   name: Setup Java
-                uses: actions/setup-java@v4
+                uses: actions/setup-java@v5
                 with:
                     java-version: ${{ env.JAVA_VERSION }}
                     distribution: ${{ env.JAVA_DISTRO }}
@@ -131,7 +131,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   name: 'Check out repository'
-                uses: actions/checkout@v4
+                uses: actions/checkout@v5
                 with:
                     fetch-depth: 0 # otherwise, pushing refs to dest repo fails
 
@@ -141,10 +141,10 @@ jobs:
                     git checkout --progress --force refs/tags/${{ github.event.inputs.version }}
 
             -   name: 'Download all build artifacts'
-                uses: actions/download-artifact@v4.1.7
+                uses: actions/download-artifact@v5.0.0
 
             -   name: 'Set up Java'
-                uses: actions/setup-java@v4
+                uses: actions/setup-java@v5
                 with:
                     java-version: ${{ env.JAVA_VERSION }}
                     distribution: ${{ env.JAVA_DISTRO }}
