@@ -50,7 +50,8 @@ class PluginLoader(
 
         command.arguments.forEach {
             commandSpec.addPositional(
-                PositionalParamSpec.builder()
+                PositionalParamSpec
+                    .builder()
                     .paramLabel(it.name)
                     .index(it.position)
                     .arity(it.arity)
@@ -61,7 +62,8 @@ class PluginLoader(
 
         command.options.forEach {
             commandSpec.addOption(
-                OptionSpec.builder(it.names.toTypedArray())
+                OptionSpec
+                    .builder(it.names.toTypedArray())
                     .type(asType(it.type))
                     .completionCandidates(it.completionCandidates)
                     .build(),

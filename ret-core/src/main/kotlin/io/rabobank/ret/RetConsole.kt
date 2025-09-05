@@ -11,9 +11,13 @@ import picocli.CommandLine.ParseResult
  * This class is used to interact with the user by outputting messages, errors and prompting for responses.
  */
 @ApplicationScoped
-class RetConsole(parseResult: ParseResult) {
+class RetConsole(
+    parseResult: ParseResult,
+) {
     private val commandLine =
-        parseResult.commandSpec().commandLine()
+        parseResult
+            .commandSpec()
+            .commandLine()
             .setColorScheme(ColorScheme.Builder().ansi(CommandLine.Help.Ansi.AUTO).build())
 
     /**

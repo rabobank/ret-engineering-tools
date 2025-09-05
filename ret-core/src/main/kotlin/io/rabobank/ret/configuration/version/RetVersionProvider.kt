@@ -13,8 +13,9 @@ import picocli.CommandLine
  */
 @Unremovable
 @ApplicationScoped
-class RetVersionProvider(private val versionProperties: VersionProperties = VersionProperties()) :
-    CommandLine.IVersionProvider {
+class RetVersionProvider(
+    private val versionProperties: VersionProperties = VersionProperties(),
+) : CommandLine.IVersionProvider {
     override fun getVersion() =
         arrayOf(
             "RET Version: ${versionProperties.getAppVersion()}",

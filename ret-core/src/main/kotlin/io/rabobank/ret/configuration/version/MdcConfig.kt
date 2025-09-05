@@ -12,7 +12,9 @@ import org.jboss.logging.MDC
  * This is done automatically, so you don't need to use this class in your plugin.
  */
 @ApplicationScoped
-class MdcConfig(private val versionProperties: VersionProperties) {
+class MdcConfig(
+    private val versionProperties: VersionProperties,
+) {
     @Suppress("unused")
     fun onStart(
         @Observes ev: StartupEvent,

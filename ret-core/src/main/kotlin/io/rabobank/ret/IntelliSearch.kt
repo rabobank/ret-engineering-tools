@@ -3,9 +3,16 @@ package io.rabobank.ret
 import io.quarkus.logging.Log
 import jakarta.enterprise.context.ApplicationScoped
 
-data class SearchHit(val filterRound: FilterRound, val candidateIndex: Int)
+data class SearchHit(
+    val filterRound: FilterRound,
+    val candidateIndex: Int,
+)
 
-data class FilterRound(val filter: String, val startIndex: Int, val endIndex: Int) {
+data class FilterRound(
+    val filter: String,
+    val startIndex: Int,
+    val endIndex: Int,
+) {
     val value = filter.substring(startIndex..endIndex)
 
     override fun toString() = "filter: $filter part: $startIndex..$endIndex value: $value"

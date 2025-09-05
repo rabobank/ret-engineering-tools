@@ -9,4 +9,8 @@ package io.rabobank.ret.configuration
  * @property prompt the message to the user, specifying what should be provided for this config property.
  * @property required tells the user this is a mandatory field which cannot be skipped.
  */
-data class ConfigurationProperty(val key: String, val prompt: String, val required: Boolean = false)
+data class ConfigurationProperty(
+    val key: String,
+    val prompt: String,
+    val required: Boolean = false,
+)
