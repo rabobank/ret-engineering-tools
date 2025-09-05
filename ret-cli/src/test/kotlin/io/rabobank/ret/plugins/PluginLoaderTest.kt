@@ -63,7 +63,8 @@ class PluginLoaderTest {
 
     private fun loadPlugin(file: String): Plugin {
         val definition =
-            this.javaClass.classLoader.getResourceAsStream("testdata/$file")!!
+            this.javaClass.classLoader
+                .getResourceAsStream("testdata/$file")!!
                 .bufferedReader()
                 .readText()
 

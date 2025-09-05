@@ -56,7 +56,11 @@ function $functionName() {
     ): List<ArgumentSpecActionPair> {
         val overviewValues =
             subcommands.joinToString(" ") {
-                val description = it.commandSpec.usageMessage().description().firstOrNull() ?: ""
+                val description =
+                    it.commandSpec
+                        .usageMessage()
+                        .description()
+                        .firstOrNull() ?: ""
                 "'${it.commandName}[$description]'"
             }
 
@@ -110,7 +114,11 @@ function $functionName() {
 
     private fun generatePositionalParameterSpecActionPairs(positionalParameters: List<PositionalParamSpec>) =
         positionalParameters.withIndex().mapNotNull {
-            val description = it.value.description().joinToString("").ifEmpty { " " }
+            val description =
+                it.value
+                    .description()
+                    .joinToString("")
+                    .ifEmpty { " " }
             val index = it.index + 1
 
             when (val action = generateAutocompleteAction(it.value.completionCandidates())) {
@@ -153,12 +161,20 @@ function $functionName() {
      * This data class holds the spec which will be added to ZSH's _arguments method,
      * and the action describes what's done when a certain argument spec is matched.
      */
-    data class ArgumentSpecActionPair(val spec: String, val action: String? = null)
+    data class ArgumentSpecActionPair(
+        val spec: String,
+        val action: String? = null,
+    )
 
     sealed interface AutoCompleteAction
+
     data object NoAction : AutoCompleteAction
 
-    data class FunctionCallAction(val functionName: String) : AutoCompleteAction
+    data class FunctionCallAction(
+        val functionName: String,
+    ) : AutoCompleteAction
 
-    data class StaticValuesAction(val staticValues: String) : AutoCompleteAction
+    data class StaticValuesAction(
+        val staticValues: String,
+    ) : AutoCompleteAction
 }

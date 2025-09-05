@@ -7,7 +7,9 @@ import picocli.CommandLine.Model.CommandSpec
 private const val SHEBANG = "#!/bin/zsh"
 
 @ApplicationScoped
-class ZshAutocompletionGenerator(private val template: ZshAutocompletionTemplate) {
+class ZshAutocompletionGenerator(
+    private val template: ZshAutocompletionTemplate,
+) {
     /**
      * This function generates the full ZSH autocompletion script for the command that's provided and all subcommands
      */
@@ -23,8 +25,10 @@ class ZshAutocompletionGenerator(private val template: ZshAutocompletionTemplate
     }
 
     private fun loadLinesForResource() =
-        ZshAutocompletionGenerator::class.java.getResourceAsStream("/autocompletion/zsh/footer.sh")
-            ?.bufferedReader()?.lines()
+        ZshAutocompletionGenerator::class.java
+            .getResourceAsStream("/autocompletion/zsh/footer.sh")
+            ?.bufferedReader()
+            ?.lines()
             ?: error("Cannot find footer.sh for the autocompletion script")
 
     /**

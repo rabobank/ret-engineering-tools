@@ -6,7 +6,9 @@ import picocli.CommandLine
 import picocli.CommandLine.IExecutionExceptionHandler
 import picocli.CommandLine.ParseResult
 
-class ExceptionMessageHandler(private val retConsole: RetConsole) : IExecutionExceptionHandler {
+class ExceptionMessageHandler(
+    private val retConsole: RetConsole,
+) : IExecutionExceptionHandler {
     override fun handleExecutionException(
         ex: Exception,
         commandLine: CommandLine,

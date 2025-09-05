@@ -47,7 +47,8 @@ class VersionProperties {
     }
 
     private fun loadGitProperties() {
-        VersionProperties::class.java.classLoader.getResourceAsStream(GIT_PROPERTIES)
+        VersionProperties::class.java.classLoader
+            .getResourceAsStream(GIT_PROPERTIES)
             ?.run { properties.load(this) }
             ?: Log.debug("No Git information available: cannot load git.properties file.")
     }

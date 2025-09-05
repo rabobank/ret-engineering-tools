@@ -21,7 +21,8 @@ class PluginExtensionLoader {
         objectMapper: ObjectMapper,
     ): List<Plugin> =
         osUtils.getRetPluginsDirectory().let { pluginPath ->
-            pluginPath.walk()
+            pluginPath
+                .walk()
                 .map(Path::toFile)
                 .filter { it.extension == PLUGIN_EXTENSION }
                 .map { objectMapper.readValue<PluginDefinition>(it.readText()) }

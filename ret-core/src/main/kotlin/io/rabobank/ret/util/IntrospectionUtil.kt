@@ -17,7 +17,8 @@ object IntrospectionUtil {
     )
 
     private fun loadCustomZshAutocompletion(): String? =
-        javaClass.getResourceAsStream("/autocompletion/zsh/completions.zsh")
+        javaClass
+            .getResourceAsStream("/autocompletion/zsh/completions.zsh")
             ?.bufferedReader()
             ?.readText()
 
@@ -34,7 +35,8 @@ object IntrospectionUtil {
                 )
             }
         val options =
-            commandSpec.options()
+            commandSpec
+                .options()
                 .map {
                     Option(
                         it.names().toList(),
@@ -44,7 +46,9 @@ object IntrospectionUtil {
                 }
 
         val subcommands =
-            commandSpec.subcommands().values
+            commandSpec
+                .subcommands()
+                .values
                 .map {
                     generateCommand(it.commandSpec)
                 }

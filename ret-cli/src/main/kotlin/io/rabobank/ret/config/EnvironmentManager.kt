@@ -16,11 +16,12 @@ class EnvironmentManager {
         runCatching {
             Log.debug("ret.env value is $retEnvironment")
             valueOf(retEnvironment)
-        }
-            .getOrDefault(CLI)
+        }.getOrDefault(CLI)
 }
 
-enum class Environment(val recordMetrics: Boolean) {
+enum class Environment(
+    val recordMetrics: Boolean,
+) {
     CLI(true),
     ZSH_AUTOCOMPLETE(false),
     ALFRED(true),

@@ -95,7 +95,9 @@ open class Configurable {
     inline fun <reified T> convertTo() = objectMapper.convertValue<T>(pluginConfig.config)
 }
 
-class PluginConfig(val config: MutableMap<String, Any?>) {
+class PluginConfig(
+    val config: MutableMap<String, Any?>,
+) {
     inline operator fun <reified T> get(key: String): T? {
         val value = config[key]
         return if (value is T?) {
@@ -115,7 +117,11 @@ class PluginConfig(val config: MutableMap<String, Any?>) {
     }
 }
 
-class PluginConfigLoader(pluginName: String, private val objectMapper: ObjectMapper, osUtils: OsUtils) {
+class PluginConfigLoader(
+    pluginName: String,
+    private val objectMapper: ObjectMapper,
+    osUtils: OsUtils,
+) {
     private val pluginFile = osUtils.getPluginConfig(pluginName).toFile()
 
     fun load() =

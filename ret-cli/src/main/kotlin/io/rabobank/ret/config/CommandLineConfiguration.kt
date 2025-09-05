@@ -10,14 +10,17 @@ import picocli.CommandLine.Help.Ansi.AUTO
 import picocli.CommandLine.Help.ColorScheme
 
 @ApplicationScoped
-class CommandLineConfiguration(private val pluginLoader: PluginLoader) {
+class CommandLineConfiguration(
+    private val pluginLoader: PluginLoader,
+) {
     @Produces
     fun customCommandLine(
         factory: PicocliCommandLineFactory,
         retConsole: RetConsole,
     ): CommandLine {
         val commandLine =
-            factory.create()
+            factory
+                .create()
                 .setExecutionExceptionHandler(ExceptionMessageHandler(retConsole))
                 .setExecutionStrategy { CommandLine.RunLast().execute(it) }
                 .setColorScheme(ColorScheme.Builder().ansi(AUTO).build())
