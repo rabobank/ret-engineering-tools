@@ -41,14 +41,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <kotlin.code.style>official</kotlin.code.style>
-        <kotlin.version>2.2.0</kotlin.version>
+        <kotlin.version>2.2.10</kotlin.version>
         <maven.compiler.release>21</maven.compiler.release>
 
         <compiler-plugin.version>3.14.0</compiler-plugin.version>
         <dokka-maven-plugin.version>2.0.0</dokka-maven-plugin.version>
         <git-commit-id.version>9.0.2</git-commit-id.version>
         <jandex-maven-plugin.version>1.2.3</jandex-maven-plugin.version>
-        <jreleaser-maven-plugin.version>1.19.0</jreleaser-maven-plugin.version>
+        <jreleaser-maven-plugin.version>1.20.0</jreleaser-maven-plugin.version>
         <ktlint-maven-plugin.version>3.5.0</ktlint-maven-plugin.version>
         <maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
         <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
@@ -57,18 +57,18 @@
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
-        <quarkus.platform.version>3.25.0</quarkus.platform.version>
+        <quarkus.platform.version>3.26.2</quarkus.platform.version>
         <surefire-plugin.version>3.5.3</surefire-plugin.version>
-        <versions-maven-plugin.version>2.18.0</versions-maven-plugin.version>
+        <versions-maven-plugin.version>2.19.0</versions-maven-plugin.version>
 
-        <assertj-core.version>3.27.3</assertj-core.version>
+        <assertj-core.version>3.27.4</assertj-core.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <detekt.version>1.23.8</detekt.version>
         <maven-surefire-junit5-tree-reporter.version>1.4.0</maven-surefire-junit5-tree-reporter.version>
         <mockito-kotlin.version>5.1.0</mockito-kotlin.version>
         <quarkus-jgit.version>3.3.3</quarkus-jgit.version>
         <quarkus-junit5-mockk.version>3.1.0</quarkus-junit5-mockk.version>
-        <sshd-core.version>2.15.0</sshd-core.version>
+        <sshd-core.version>2.16.0</sshd-core.version>
     </properties>
 
     <dependencyManagement>
