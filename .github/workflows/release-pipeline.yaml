@@ -88,7 +88,7 @@ jobs:
                 run: mvn -B -ntp --file pom.xml -Pdist package -DskipTests
 
             -   name: 'Upload build artifact'
-                uses: actions/upload-artifact@v4
+                uses: actions/upload-artifact@v5
                 with:
                     name: artifacts-cli
                     path: |
@@ -119,7 +119,7 @@ jobs:
                     mvn -B --file pom.xml -Ppublication
 
             -   name: 'Upload build artifact'
-                uses: actions/upload-artifact@v4
+                uses: actions/upload-artifact@v5
                 with:
                     name: artifacts-plugin
                     path: |
@@ -141,7 +141,7 @@ jobs:
                     git checkout --progress --force refs/tags/${{ github.event.inputs.version }}
 
             -   name: 'Download all build artifacts'
-                uses: actions/download-artifact@v5.0.0
+                uses: actions/download-artifact@v6.0.0
 
             -   name: 'Set up Java'
                 uses: actions/setup-java@v5
