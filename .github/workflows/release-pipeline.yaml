@@ -14,6 +14,9 @@ env:
     JAVA_VERSION: '21'
     JAVA_DISTRO: 'zulu'
 
+    RELEASE_VERSION: ${{ github.event.inputs.version }}
+    NEXT_VERSION: ${{ github.event.inputs.next }}
+
 jobs:
     # Set versions
     prepare:
@@ -23,7 +26,7 @@ jobs:
                 uses: mukunku/tag-exists-action@v1.7.0
                 id: checkTag
                 with:
-                    tag: ${{ github.event.inputs.version }}
+                    tag: ${{ env.RELEASE_VERSION }}
 
             -   uses: actions/checkout@v6
                 if: steps.checkTag.outputs.exists == 'false'
@@ -44,12 +47,35 @@ jobs:
                     git config --global user.email "skunkworks-rabot@users.noreply.github.com"
                     git config --global user.name "Skunk Works Rabot"
 
+            -   name: 'Validate workflow inputs'
+                if: steps.checkTag.outputs.exists == 'false'
+                shell: bash
+                run: |
+                    set -euo pipefail
+
+                    VERSION_REGEX='^[0-9]+\.[0-9]+\.[0-9]+$'
+
+                    if [[ -z "${RELEASE_VERSION}" || ! "${RELEASE_VERSION}" =~ ${VERSION_REGEX} ]]; then
+                      echo "Invalid input 'version' (${RELEASE_VERSION}). Expected e.g. 1.2.3" >&2
+                      exit 1
+                    fi
+
+                    if [[ -z "${NEXT_VERSION}" || ! "${NEXT_VERSION}" =~ ${VERSION_REGEX} ]]; then
+                      echo "Invalid input 'next' (${NEXT_VERSION}). Expected e.g. 1.2.3" >&2
+                      exit 1
+                    fi
+
             -   name: 'Prepare release'
                 if: steps.checkTag.outputs.exists == 'false'
+                shell: bash
                 run: |
-                    RELEASE_VERSION=${{ github.event.inputs.version }}
-                    NEXT_VERSION=${{ github.event.inputs.next }}
-                    mvn -B -ntp --file pom.xml release:prepare -B -Dusername=skunkworks-rabot -Dpassword=${{ secrets.SKUNKWORKS_RABOT_PAT}} -Dtag=$RELEASE_VERSION -DreleaseVersion=$RELEASE_VERSION -DdevelopmentVersion="${NEXT_VERSION}-SNAPSHOT"
+                    set -euo pipefail
+                    mvn -B -ntp --file pom.xml release:prepare -B \
+                      -Dusername=skunkworks-rabot \
+                      -Dpassword=${{ secrets.SKUNKWORKS_RABOT_PAT}} \
+                      -Dtag="${RELEASE_VERSION}" \
+                      -DreleaseVersion="${RELEASE_VERSION}" \
+                      -DdevelopmentVersion="${NEXT_VERSION}-SNAPSHOT"
 
     # Build RET CLI executable per runner
     cli:
@@ -64,7 +90,7 @@ jobs:
             -   name: 'Check out repository'
                 uses: actions/checkout@v6
                 with:
-                    ref: ${{ github.event.inputs.version }}
+                    ref: ${{ env.RELEASE_VERSION }}
                     fetch-depth: 0
 
             -   name: 'Set up Graal'
@@ -105,7 +131,7 @@ jobs:
             -   name: Checkout
                 uses: actions/checkout@v6
                 with:
-                    ref: ${{ github.event.inputs.version }}
+                    ref: ${{ env.RELEASE_VERSION }}
                     fetch-depth: 0
 
             -   name: Setup Java
@@ -136,9 +162,11 @@ jobs:
                     fetch-depth: 0 # otherwise, pushing refs to dest repo fails
 
             -   name: 'Checkout tag'
+                shell: bash
                 run: |
+                    set -euo pipefail
                     git fetch --all
-                    git checkout --progress --force refs/tags/${{ github.event.inputs.version }}
+                    git checkout --progress --force "refs/tags/${RELEASE_VERSION}"
 
             -   name: 'Download all build artifacts'
                 uses: actions/download-artifact@v8.0.0
