@@ -169,7 +169,7 @@ jobs:
                     git checkout --progress --force "refs/tags/${RELEASE_VERSION}"
 
             -   name: 'Download all build artifacts'
-                uses: actions/download-artifact@v8.0.0
+                uses: actions/download-artifact@v8.0.1
 
             -   name: 'Set up Java'
                 uses: actions/setup-java@v5
