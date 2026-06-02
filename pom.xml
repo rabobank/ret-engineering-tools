@@ -58,7 +58,7 @@
         <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
         <quarkus.platform.version>3.35.1</quarkus.platform.version>
-        <surefire-plugin.version>3.5.5</surefire-plugin.version>
+        <surefire-plugin.version>3.5.6</surefire-plugin.version>
         <versions-maven-plugin.version>2.21.0</versions-maven-plugin.version>
 
         <assertj-core.version>3.27.7</assertj-core.version>
