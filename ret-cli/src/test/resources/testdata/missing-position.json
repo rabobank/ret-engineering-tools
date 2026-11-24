@@ -1,0 +1,36 @@
+{
+    "libName": "test-plugin",
+    "commands": [
+        {
+            "name": "test",
+            "arguments": [],
+            "options": [],
+            "subcommands": [
+                {
+                    "name": "open",
+                    "arguments": [
+                        {
+                            "name": "<pipeline_id>",
+                            "position": null,
+                            "completionCandidates": [],
+                            "arity": "0..1"
+                        },
+                        {
+                            "name": "<pipeline_run_id>",
+                            "completionCandidates": [],
+                            "arity": "0..1"
+                        }
+                    ],
+                    "options": [
+                        {
+                            "names": ["--enabled"],
+                            "type": "boolean",
+                            "completionCandidates": []
+                        }
+                    ],
+                    "subcommands": []
+                }
+            ]
+        }
+    ]
+}
