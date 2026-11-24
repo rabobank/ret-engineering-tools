@@ -1,195 +1,166 @@
 name: RET release pipeline
 
 on:
-    workflow_dispatch:
+    workflow_call:
         inputs:
-            version:
-                description: 'Version to release'
+            release-type:
+                description: 'Release increment: patch, minor, or major'
+                type: string
                 required: true
-            next:
-                description: 'Next version to release'
-                required: true
+
+concurrency:
+    group: ret-release
+    cancel-in-progress: false
 
 env:
     JAVA_VERSION: '21'
     JAVA_DISTRO: 'zulu'
 
-    RELEASE_VERSION: ${{ github.event.inputs.version }}
-    NEXT_VERSION: ${{ github.event.inputs.next }}
-
 jobs:
-    # Set versions
     prepare:
         runs-on: ubuntu-latest
+        outputs:
+            release-version: ${{ steps.versions.outputs.release-version }}
         steps:
-            -   name: Retrieve tag exists flag
-                uses: mukunku/tag-exists-action@v1.7.0
-                id: checkTag
-                with:
-                    tag: ${{ env.RELEASE_VERSION }}
+            -   name: Check release prerequisites
+                env:
+                    RELEASE_REF: ${{ github.ref }}
+                    MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+                    MAVEN_TOKEN: ${{ secrets.MAVEN_TOKEN }}
+                run: |
+                    if [[ "$RELEASE_REF" != "refs/heads/main" ]]; then
+                      echo "::error::Releases must be run from main."
+                      exit 1
+                    fi
+                    if [[ -z "$MAVEN_USERNAME" || -z "$MAVEN_TOKEN" ]]; then
+                      echo "::error::Configure MAVEN_USERNAME and MAVEN_TOKEN with a Central Publisher Portal user token before releasing."
+                      exit 1
+                    fi
 
             -   uses: actions/checkout@v7
-                if: steps.checkTag.outputs.exists == 'false'
                 with:
+                    ref: main
                     persist-credentials: false
                     fetch-depth: 0
 
-            -   name: 'Set up Java'
-                if: steps.checkTag.outputs.exists == 'false'
-                uses: actions/setup-java@v6.1.0
+            -   name: Calculate release versions
+                id: versions
+                shell: python
+                env:
+                    RELEASE_TYPE: ${{ inputs.release-type }}
+                run: |
+                    import os
+                    import re
+                    import xml.etree.ElementTree as ET
+
+                    version = ET.parse("pom.xml").getroot().findtext("{http://maven.apache.org/POM/4.0.0}version")
+                    match = re.fullmatch(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)-SNAPSHOT", version or "")
+                    if not match:
+                        raise SystemExit(f"Expected a major.minor.patch-SNAPSHOT POM version, got {version!r}")
+
+                    major, minor, patch = map(int, match.groups())
+                    release_type = os.environ["RELEASE_TYPE"]
+                    if release_type == "minor":
+                        minor, patch = minor + 1, 0
+                    elif release_type == "major":
+                        major, minor, patch = major + 1, 0, 0
+                    elif release_type != "patch":
+                        raise SystemExit(f"Unsupported release type: {release_type!r}")
+
+                    release = f"{major}.{minor}.{patch}"
+                    next_version = f"{major}.{minor}.{patch + 1}-SNAPSHOT"
+                    with open(os.environ["GITHUB_OUTPUT"], "a") as output:
+                        output.write(f"release-version={release}\nnext-version={next_version}\n")
+                    with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as summary:
+                        summary.write(f"Release: `{version}` -> `{release}` -> `{next_version}`\n")
+                    print(f"Releasing {release}; next development version: {next_version}")
+
+            -   uses: actions/setup-java@v6.1.0
                 with:
                     java-version: ${{ env.JAVA_VERSION }}
                     distribution: ${{ env.JAVA_DISTRO }}
+                    cache: maven
 
-            -   name: 'Configure Git user'
-                if: steps.checkTag.outputs.exists == 'false'
+            -   name: Prepare release
+                env:
+                    RELEASE_VERSION: ${{ steps.versions.outputs.release-version }}
+                    NEXT_VERSION: ${{ steps.versions.outputs.next-version }}
+                    RELEASE_TOKEN: ${{ secrets.SKUNKWORKS_RABOT_PAT }}
                 run: |
-                    git config --global user.email "skunkworks-rabot@users.noreply.github.com"
-                    git config --global user.name "Skunk Works Rabot"
-
-            -   name: 'Validate workflow inputs'
-                if: steps.checkTag.outputs.exists == 'false'
-                shell: bash
-                run: |
-                    set -euo pipefail
-
-                    VERSION_REGEX='^[0-9]+\.[0-9]+\.[0-9]+$'
-
-                    if [[ -z "${RELEASE_VERSION}" || ! "${RELEASE_VERSION}" =~ ${VERSION_REGEX} ]]; then
-                      echo "Invalid input 'version' (${RELEASE_VERSION}). Expected e.g. 1.2.3" >&2
+                    if git show-ref --verify --quiet "refs/tags/${RELEASE_VERSION}"; then
+                      echo "::error::Release tag ${RELEASE_VERSION} already exists."
                       exit 1
                     fi
-
-                    if [[ -z "${NEXT_VERSION}" || ! "${NEXT_VERSION}" =~ ${VERSION_REGEX} ]]; then
-                      echo "Invalid input 'next' (${NEXT_VERSION}). Expected e.g. 1.2.3" >&2
-                      exit 1
-                    fi
-
-            -   name: 'Prepare release'
-                if: steps.checkTag.outputs.exists == 'false'
-                shell: bash
-                run: |
-                    set -euo pipefail
-                    mvn -B -ntp --file pom.xml release:prepare -B \
+                    git config user.email "skunkworks-rabot@users.noreply.github.com"
+                    git config user.name "Skunk Works Rabot"
+                    mvn -B -ntp release:prepare \
                       -Dusername=skunkworks-rabot \
-                      -Dpassword=${{ secrets.SKUNKWORKS_RABOT_PAT}} \
+                      -Dpassword="${RELEASE_TOKEN}" \
                       -Dtag="${RELEASE_VERSION}" \
                       -DreleaseVersion="${RELEASE_VERSION}" \
-                      -DdevelopmentVersion="${NEXT_VERSION}-SNAPSHOT"
+                      -DdevelopmentVersion="${NEXT_VERSION}"
 
-    # Build RET CLI executable per runner
     cli:
         needs: [ prepare ]
-        name: 'Build RET CLI with Graal on ${{ matrix.os }}'
+        name: Native CLI (${{ matrix.os }})
         strategy:
-            fail-fast: true
             matrix:
-                os: [ ubuntu-latest, macos-latest, macos-13 ]
+                os: [ ubuntu-latest, macos-15, macos-15-intel ]
         runs-on: ${{ matrix.os }}
         steps:
-            -   name: 'Check out repository'
-                uses: actions/checkout@v7
+            -   uses: actions/checkout@v7
                 with:
-                    ref: ${{ env.RELEASE_VERSION }}
+                    ref: ${{ needs.prepare.outputs.release-version }}
                     fetch-depth: 0
 
-            -   name: 'Set up Graal'
-                uses: graalvm/setup-graalvm@v1
+            -   uses: graalvm/setup-graalvm@v1
                 with:
                     distribution: 'graalvm'
                     java-version: ${{ env.JAVA_VERSION }}
-                    github-token: ${{ secrets.GITHUB_TOKEN }}
+                    cache: maven
 
-            -   name: 'Cache Maven packages'
-                uses: actions/cache@v6
+            -   name: Build native distribution
+                run: |
+                    mvn -B -ntp -Pnative package
+                    mvn -B -ntp -Pdist package -DskipTests
+
+            -   uses: actions/upload-artifact@v7
                 with:
-                    path: ~/.m2/repository
-                    key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-                    restore-keys: ${{ runner.os }}-maven-
-
-            -   name: 'Build Native Image'
-                run: mvn -B -ntp --file pom.xml -Pnative package
-
-            -   name: 'Create distribution'
-                run: mvn -B -ntp --file pom.xml -Pdist package -DskipTests
-
-            -   name: 'Upload build artifact'
-                uses: actions/upload-artifact@v7
-                with:
-                    name: artifacts-cli
+                    name: artifacts-cli-${{ matrix.os }}
                     path: |
                         ret-cli/target/distributions/*.zip
                         ret-cli/target/distributions/*.tar.gz
 
-    # Package RET Plugin for maven central
-    plugin:
-        needs: [ prepare ]
-        name: 'Package RET Plugin for maven central'
+    release:
+        needs: [ prepare, cli ]
         runs-on: ubuntu-latest
-
         steps:
-            -   name: Checkout
-                uses: actions/checkout@v7
+            -   uses: actions/checkout@v7
                 with:
-                    ref: ${{ env.RELEASE_VERSION }}
+                    ref: ${{ needs.prepare.outputs.release-version }}
                     fetch-depth: 0
 
-            -   name: Setup Java
-                uses: actions/setup-java@v6.1.0
+            -   uses: actions/download-artifact@v8.0.2
+                with:
+                    pattern: artifacts-cli-*
+                    merge-multiple: true
+                    path: artifacts-cli
+
+            -   uses: actions/setup-java@v6.1.0
                 with:
                     java-version: ${{ env.JAVA_VERSION }}
                     distribution: ${{ env.JAVA_DISTRO }}
+                    cache: maven
 
-            -   name: Package artifact
-                run: |
-                    mvn -B --file pom.xml -Ppublication
+            -   name: Stage Maven artifacts
+                run: mvn -B -ntp -Ppublication
 
-            -   name: 'Upload build artifact'
-                uses: actions/upload-artifact@v7
-                with:
-                    name: artifacts-plugin
-                    path: |
-                        target/staging-deploy
-
-    # Collect all release candidates and release
-    release:
-        needs: [ cli, plugin ]
-        runs-on: ubuntu-latest
-        steps:
-            -   name: 'Check out repository'
-                uses: actions/checkout@v7
-                with:
-                    fetch-depth: 0 # otherwise, pushing refs to dest repo fails
-
-            -   name: 'Checkout tag'
-                shell: bash
-                run: |
-                    set -euo pipefail
-                    git fetch --all
-                    git checkout --progress --force "refs/tags/${RELEASE_VERSION}"
-
-            -   name: 'Download all build artifacts'
-                uses: actions/download-artifact@v8.0.2
-
-            -   name: 'Set up Java'
-                uses: actions/setup-java@v6.1.0
-                with:
-                    java-version: ${{ env.JAVA_VERSION }}
-                    distribution: ${{ env.JAVA_DISTRO }}
-
-            -   name: 'Cache Maven packages'
-                uses: actions/cache@v6
-                with:
-                    path: ~/.m2/repository
-                    key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-                    restore-keys: ${{ runner.os }}-maven-
-
-            -   name: 'Release with JReleaser'
+            -   name: Publish with JReleaser
                 env:
                     JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
                     JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
                     JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
-                    JRELEASER_NEXUS2_PASSWORD: ${{ secrets.JRELEASER_NEXUS2_PASSWORD }}
-                    JRELEASER_NEXUS2_USERNAME: ${{ secrets.JRELEASER_NEXUS2_USERNAME }}
+                    JRELEASER_MAVENCENTRAL_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+                    JRELEASER_MAVENCENTRAL_PASSWORD: ${{ secrets.MAVEN_TOKEN }}
                     JRELEASER_GITHUB_TOKEN: ${{ secrets.SKUNKWORKS_RABOT_PAT }}
                 run: mvn -N -B -ntp --file pom.xml -DartifactsDir=artifacts-cli jreleaser:full-release

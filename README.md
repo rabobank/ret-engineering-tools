@@ -69,6 +69,36 @@ Roughly that means that you can search on a part of the word, or on (some of) th
 
 For example, `RET` resolves to Ret-Engineering-Tools and RET-plugins.
 
+## Releasing
+
+From the repository's **Actions** tab, select **Patch Release**, **Minor Release**, or **Major Release**,
+then choose **Run workflow** on `main`. No version inputs are needed.
+
+Versions are calculated from the root POM's current snapshot, following the same convention as shadow-tool:
+
+| Workflow | Current POM version | Release | Next development version |
+|----------|---------------------|---------|--------------------------|
+| Patch Release | `0.2.6-SNAPSHOT` | `0.2.6` | `0.2.7-SNAPSHOT` |
+| Minor Release | `0.2.6-SNAPSHOT` | `0.3.0` | `0.3.1-SNAPSHOT` |
+| Major Release | `0.2.6-SNAPSHOT` | `1.0.0` | `1.0.1-SNAPSHOT` |
+
+The shared pipeline has three stages: prepare the release tag and next snapshot, build native
+distributions, then stage Maven artifacts and publish through JReleaser. Calculated versions appear
+in the workflow summary; Maven artifacts are staged locally in the publishing job.
+Releases run serially, are restricted to `main`, and fail explicitly if the calculated tag already exists.
+Publishing uses the [Central Publisher Portal](https://central.sonatype.com/), not the retired OSSRH service.
+Before releasing, ensure the publishing account owns the `io.github.rabobank` namespace in the Portal,
+generate a Portal user token, and configure these repository Actions secrets (the same names as shadow-tool):
+
+| Secret | Value |
+|--------|-------|
+| `MAVEN_USERNAME` | The Portal user token's username |
+| `MAVEN_TOKEN` | The Portal user token's password |
+
+These replace `JRELEASER_NEXUS2_USERNAME` and `JRELEASER_NEXUS2_PASSWORD`; old OSSRH credentials must not
+be reused. The workflow checks that the new secrets are present before creating release commits or tags.
+The existing `SKUNKWORKS_RABOT_PAT` and `JRELEASER_GPG_*` signing secrets are still required.
+
 ## Create your own plugin
 
 ### Requirements
