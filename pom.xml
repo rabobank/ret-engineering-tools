@@ -348,18 +348,14 @@
                             </signing>
                             <deploy>
                                 <maven>
-                                    <nexus2>
+                                    <mavenCentral>
                                         <maven-central>
-                                            <active>ALWAYS</active>
-                                            <url>https://s01.oss.sonatype.org/service/local</url>
-                                            <snapshotUrl>https://s01.oss.sonatype.org/content/repositories/snapshots/
-                                            </snapshotUrl>
-                                            <closeRepository>true</closeRepository>
-                                            <releaseRepository>true</releaseRepository>
-                                            <stagingRepositories>artifacts-plugin</stagingRepositories>
+                                            <active>RELEASE</active>
+                                            <url>https://central.sonatype.com/api/v1/publisher</url>
+                                            <stagingRepositories>target/staging-deploy</stagingRepositories>
                                             <verifyPom>false</verifyPom>
                                         </maven-central>
-                                    </nexus2>
+                                    </mavenCentral>
                                 </maven>
                             </deploy>
                             <packagers>

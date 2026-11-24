@@ -1,0 +1,11 @@
+name: Major Release
+
+on:
+    workflow_dispatch:
+
+jobs:
+    release:
+        uses: ./.github/workflows/release-pipeline.yaml
+        with:
+            release-type: major
+        secrets: inherit
