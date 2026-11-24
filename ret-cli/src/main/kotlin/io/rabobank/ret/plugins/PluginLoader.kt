@@ -48,14 +48,14 @@ class PluginLoader(
         commandSpec.usageMessage().description(command.description)
         commandSpec.usageMessage().hidden(command.hidden)
 
-        command.arguments.forEach {
+        command.arguments.forEachIndexed { index, argument ->
             commandSpec.addPositional(
                 PositionalParamSpec
                     .builder()
-                    .paramLabel(it.name)
-                    .index(it.position)
-                    .arity(it.arity)
-                    .completionCandidates(it.completionCandidates)
+                    .paramLabel(argument.name)
+                    .index(argument.position ?: index.toString())
+                    .arity(argument.arity)
+                    .completionCandidates(argument.completionCandidates)
                     .build(),
             )
         }
